@@ -17,33 +17,31 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_VIEW_
-#define _IC_VIEW_
+#ifndef _IC_RASTER_
+#define _IC_RASTER_
 
-#include "Raster.hpp"
+#include "Buffer.hpp"
 
-#include <gtkmm/drawingarea.h>
+#include <cstdint>
 
 
 namespace IC
 {
-	class View : public Gtk::DrawingArea {
-	
-	protected:
-	
-	int width;
-	int height;
-	
-	Raster* raster;
-	
+	class Raster {
 	public:
 	
-		View();
-		virtual ~View();
+		int width;
+		int height;
+	
+		Buffer<uint32_t>* color;
+		Buffer<float>* depth;
+	
+		Raster(int width,int height);
+		virtual ~ Raster();
 		
-		//overload draw method
-		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
+		void Resize(int width,int height);
+		void Clear();
+		
 	};
 }
 

@@ -17,35 +17,50 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_VIEW_
-#define _IC_VIEW_
+#ifndef _IC_BUFFER_
+#define _IC_BUFFER_
 
-#include "Raster.hpp"
-
-#include <gtkmm/drawingarea.h>
-
+#include <stdexcept>
 
 namespace IC
 {
-	class View : public Gtk::DrawingArea {
-	
-	protected:
-	
-	int width;
-	int height;
-	
-	Raster* raster;
-	
+	template <class T>
+	class Buffer {
 	public:
 	
-		View();
-		virtual ~View();
+		int width;
+		int height;
 		
-		//overload draw method
-		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
+		T* data;
+		
+	
+		Buffer(int width,int height)
+		{
+			if (width<=0 or height<=0) {
+				throw std::runtime_error("Invalid buffer dimensions");
+			}
+	
+			this->width=width;
+			this->height=height;
+	
+			data=new T[width*height];
+		}
+		
+		virtual ~Buffer()
+		{
+			delete [] data;
+		}
+		
+		void Set(int x,int y,const T value)
+		{
+			data[x+y*width]=value;
+		}
+		
+		T Get(int x,int y)
+		{
+			return data[x+y*width];
+		}
 	};
 }
-
 
 #endif

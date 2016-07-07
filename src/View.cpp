@@ -19,24 +19,68 @@
 
 #include "View.hpp"
 
-using namespace IC;
+#include <iostream>
 
+using namespace IC;
+using namespace std;
 
 View::View()
 {
+	width=0;
+	height=0;
+	
+	raster=new Raster(32,32);
 }
 
 
 View::~View()
 {
+	delete raster;
 }
 
 
 bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+
+	Gtk::Allocation allocation = get_allocation();
+	const int w = allocation.get_width();
+	const int h = allocation.get_height();
+
+	//resize
+	if (w!=width or h!=height) {
+	
+		
+		width=w;
+		height=h;
+		
+		raster->Resize(width,height);
+	
+	}
+	
+	Cairo::RefPtr<Cairo::ImageSurface> buffer;
+	
+	buffer=Cairo::ImageSurface::create(
+		(unsigned char*)(raster->color->data),
+		Cairo::Format::FORMAT_ARGB32,
+		width,
+		height,
+		width*4
+		);
+
 	//253 246 227 base3
 	//101 123 131 base00
 	
-	cr->set_source_rgb(0.99, 0.96, 0.89);
+	raster->Clear();
+	
+	cr->set_source(buffer,0,0);
 	cr->paint();
+	
+	cr->set_source_rgb(0.99, 0.96, 0.89);
+	cr->move_to(width,0);
+	cr->line_to(0,height);
+	cr->stroke();
+	
+
 }
+
+
