@@ -45,6 +45,8 @@ namespace IC
 		void Resize(int width,int height);
 		void Clear();
 		
+		void Line(Vec4 & a,Vec4 & b);
+		
 	};
 }
 

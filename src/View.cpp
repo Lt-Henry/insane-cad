@@ -70,7 +70,6 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	//253 246 227 base3
 	//101 123 131 base00
 	
-	cout<<"Size:"<<w<<","<<h<<endl;
 	
 	raster->Clear();
 	

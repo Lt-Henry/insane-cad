@@ -21,6 +21,7 @@
 #include "Raster.hpp"
 
 #include <iostream>
+#include <cmath>
 
 using namespace IC;
 using namespace std;
@@ -92,25 +93,78 @@ void Raster::Clear()
 		}
 	}
 	
+	static float r=0.9;
+	static float angle=0.0f;
+	
+	
+	Vec4 o;
 	Vec4 p;
 	
+	o.data[0]=0.0f;
+	o.data[1]=0.0f;
+	o.data[2]=0.0f;
+	o.data[3]=1.0f;
 	
-	p.data[0]=0.0f;
-	p.data[1]=0.0f;
+	p.data[0]=cos(angle)*r;
+	p.data[1]=sin(angle)*r;
 	p.data[2]=0.0f;
 	p.data[3]=1.0f;
 	
-	for (int n=0;n<10;n++) {
-		
-		
-		Vec4 s = p ^ viewport;
-		s.Homogeneus();
-		cout<<p.data[0]<<","<<p.data[1]<<endl;
-		cout<<s.data[0]<<","<<s.data[1]<<endl<<endl;
-		
-		colorBuffer->Set(s.data[0],s.data[1],0xff000000);
-		
-		p.data[0]+=0.1f;
-		p.data[1]+=0.1f;
+	p=p ^ viewport;
+	o=o ^ viewport;
+	
+	p.Homogeneus();
+	o.Homogeneus();
+	
+	Line(o,p);
+	
+	angle=angle+0.05;
+}
+
+
+void Raster::Line(Vec4 & a,Vec4 & b)
+{
+	float x1=a.data[0];
+	float y1=a.data[1];
+	
+	float x2=b.data[0];
+	float y2=b.data[1];
+	
+	// Credits: https://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C.2B.2B
+	// Bresenham's line algorithm
+	
+	const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
+	if (steep) {
+		std::swap(x1, y1);
+		std::swap(x2, y2);
+	}
+
+	if (x1 > x2) {
+		std::swap(x1, x2);
+		std::swap(y1, y2);
+	}
+
+	const float dx = x2 - x1;
+	const float dy = fabs(y2 - y1);
+
+	float error = dx / 2.0f;
+	const int ystep = (y1 < y2) ? 1 : -1;
+	int y = (int)y1;
+
+	const int maxX = (int)x2;
+
+	for (int x=(int)x1; x<maxX; x++) {
+		if (steep) {
+			colorBuffer->Set(y,x,0xff000000);
+		}
+		else {
+			colorBuffer->Set(x,y,0xff000000);
+		}
+
+		error -= dy;
+		if (error < 0) {
+			y += ystep;
+			error += dx;
+		}
 	}
 }
