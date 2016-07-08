@@ -60,7 +60,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	Cairo::RefPtr<Cairo::ImageSurface> buffer;
 	
 	buffer=Cairo::ImageSurface::create(
-		(unsigned char*)(raster->color->data),
+		(unsigned char*)(raster->colorBuffer->data),
 		Cairo::Format::FORMAT_ARGB32,
 		width,
 		height,
@@ -70,14 +70,20 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	//253 246 227 base3
 	//101 123 131 base00
 	
+	cout<<"Size:"<<w<<","<<h<<endl;
+	
 	raster->Clear();
 	
 	cr->set_source(buffer,0,0);
 	cr->paint();
 	
-	cr->set_source_rgb(0.99, 0.96, 0.89);
-	cr->move_to(width,0);
-	cr->line_to(0,height);
+	cr->set_source_rgb(0.39, 0.48, 0.51);
+	cr->move_to(width/2.0,0);
+	cr->line_to(width/2.0,height);
+	cr->stroke();
+	
+	cr->move_to(0,height/2.0);
+	cr->line_to(width,height/2.0);
 	cr->stroke();
 	
 

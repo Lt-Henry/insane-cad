@@ -17,35 +17,27 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_RASTER_
-#define _IC_RASTER_
-
-#include "Buffer.hpp"
-#include "Math.hpp"
-
-#include <cstdint>
-
+#ifndef _IC_MATH_
+#define _IC_MATH_
 
 namespace IC
 {
-	class Raster {
+	class Vec4 {
 	public:
 	
-		Mat16 viewport;
-	
-		int width;
-		int height;
-	
-		Buffer<uint32_t>* colorBuffer;
-		Buffer<float>* depthBuffer;
-	
-		Raster(int width,int height);
-		virtual ~ Raster();
+		float data[4];
 		
-		void Resize(int width,int height);
-		void Clear();
-		
+		void Homogeneus();
 	};
+	
+	
+	class Mat16 {
+	public:
+	
+		float data[16];
+	};
+	
+	Vec4 operator ^ (Vec4 & v,Mat16 & m);
 }
 
 
