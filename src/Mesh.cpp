@@ -17,37 +17,18 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_MESH_
-#define _IC_MESH_
+#include "Mesh.hpp"
 
-#include "Math.hpp"
 
-#include <string>
-#include <vector>
+using namespace IC;
 
-namespace IC
+
+Mesh::Mesh()
 {
-	class Vertex {
-	public:
-		Vec4 position;
-		Vec4 normal;
-	};
-	
-	
-	class Triangle {
-	public:
-		Vertex* vertices[3];
-	};
-	
-	
-	class Mesh {
-	public:
-		std::string name;
-		std::vector<Triangle> triangles;
-		
-		Mesh();
-		Mesh(std::string filename);
-	};
 }
 
-#endif
+
+Mesh::Mesh(string filename)
+{
+}
+
