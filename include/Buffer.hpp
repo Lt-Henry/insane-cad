@@ -53,6 +53,12 @@ namespace IC
 		
 		void Set(int x,int y,const T value)
 		{
+		
+			//SLOOOOW
+			if (x<0 or y<0 or x>=width or y>=height) {
+				return;
+			}
+			
 			data[x+y*width]=value;
 		}
 		

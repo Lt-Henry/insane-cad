@@ -31,6 +31,7 @@ using namespace IC;
 int main (int argc,char* argv[])
 {
 
+	
 	cout<<"Welcome to insane cad"<<endl;
 	
 	auto app = Gtk::Application::create(argc, argv, "es.opencircus.insane-cad");

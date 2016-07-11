@@ -36,13 +36,14 @@ namespace IC
 	
 	class Triangle {
 	public:
-		Vertex* vertices[3];
+		unsigned int vertices[3];
 	};
 	
 	
 	class Mesh {
 	public:
 		std::string name;
+		std::vector<Vertex> vertices;
 		std::vector<Triangle> triangles;
 		
 		Mesh();

@@ -27,6 +27,8 @@ namespace IC
 	
 		float data[4];
 		
+		
+		void Set(float x,float y,float z,float w=0.0f);
 		void Homogeneus();
 	};
 	
@@ -35,6 +37,11 @@ namespace IC
 	public:
 	
 		float data[16];
+		
+		static Mat16 Identity();
+		static Mat16 RotationX(float phi);
+		static Mat16 RotationY(float phi);
+		static Mat16 RotationZ(float phi);
 	};
 	
 	Vec4 operator ^ (Vec4 & v,Mat16 & m);

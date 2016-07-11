@@ -19,9 +19,12 @@
 
 #include "Mesh.hpp"
 
+#include <iostream>
+#include <fstream>
+#include <vector>
 
 using namespace IC;
-
+using namespace std;
 
 Mesh::Mesh()
 {
@@ -30,5 +33,126 @@ Mesh::Mesh()
 
 Mesh::Mesh(string filename)
 {
+	fstream fs;
+	
+	setlocale(LC_NUMERIC,"C");
+	
+	fs.open(filename,fstream::in);
+	
+	
+	string chunk="header";
+	
+	vector<string> tokens;
+	string line;
+	
+	int numVertices=0;
+	int numFaces=0;
+	
+	
+	while (!fs.eof()) {
+		getline(fs,line);
+		
+		bool knee=false;
+		string tmp;
+		
+		for (char c : line) {
+		
+			if (c==' ') {
+				if (knee==true) {
+					tokens.push_back(tmp);
+					knee=false;
+					tmp="";
+				}
+			}
+			else {
+				tmp=tmp+c;
+				knee=true;
+			}
+		}
+		
+		if (tmp!="") {
+			tokens.push_back(tmp);
+		}
+		
+		
+		//faces section
+		if (chunk=="faces") {
+			if (tokens[0]=="3") {
+				int i1,i2,i3;
+				
+				i1=stoi(tokens[1]);
+				i2=stoi(tokens[2]);
+				i3=stoi(tokens[3]);
+				
+				Triangle triangle;
+				
+				triangle.vertices[0]=i1;
+				triangle.vertices[1]=i2;
+				triangle.vertices[2]=i3;
+				
+				this->triangles.push_back(triangle);
+				
+				numFaces--;
+				
+				if (numFaces==0) {
+					chunk="end";
+				}
+			}
+		}
+		
+		
+		//vertices section
+		if (chunk=="vertices") {
+			float x,y,z;
+			//float nx,ny,nz;
+			
+			x=stof(tokens[0]);
+			y=stof(tokens[1]);
+			z=stof(tokens[2]);
+			
+			Vertex vx;
+			vx.position.Set(x,y,z,1.0f);
+			
+			
+			this->vertices.push_back(vx);
+			
+			numVertices--;
+			
+			if (numVertices==0) {
+				chunk="faces";
+			}
+		}
+		
+		//header
+		if (chunk=="header") {
+			if (tokens[0]=="element") {
+				if (tokens[1]=="vertex") {
+					numVertices=stoi(tokens[2]);
+				}
+			
+				if (tokens[1]=="face") {
+					numFaces=stoi(tokens[2]);
+				}
+			}
+			
+			if (tokens[0]=="end_header") {
+				chunk="vertices";
+			}
+		
+		}
+		
+		
+		
+		
+		tokens.clear();
+	
+	}
+	
+	
+	cout<<"vertices: "<<numVertices<<endl;
+	cout<<"faces: "<<numFaces<<endl;
+
+	
+	fs.close();
 }
 

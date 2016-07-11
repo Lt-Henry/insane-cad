@@ -20,6 +20,7 @@
 #ifndef _IC_RASTER_
 #define _IC_RASTER_
 
+#include "Mesh.hpp"
 #include "Buffer.hpp"
 #include "Math.hpp"
 
@@ -43,6 +44,7 @@ namespace IC
 		virtual ~ Raster();
 		
 		void Resize(int width,int height);
+		void Draw(Mesh & mesh);
 		void Clear();
 		
 		void Line(Vec4 & a,Vec4 & b);

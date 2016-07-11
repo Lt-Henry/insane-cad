@@ -62,13 +62,13 @@ void Raster::Resize(int width,int height)
 	depthBuffer=new Buffer<float>(width,height);
 
 
-	viewport.data[0]=width/2.0f;
+	viewport.data[0]=width/60.0f;
 	viewport.data[1]=0.0f;
 	viewport.data[2]=0.0f;
 	viewport.data[3]=width/2.0f;
 	
 	viewport.data[4]=0.0f;
-	viewport.data[5]=-height/2.0f;
+	viewport.data[5]=-height/60.0f;
 	viewport.data[6]=0.0f;
 	viewport.data[7]=height/2.0f;
 	
@@ -84,6 +84,41 @@ void Raster::Resize(int width,int height)
 
 }
 
+void Raster::Draw(Mesh & mesh)
+{
+	static float phi=0.0f;
+
+	phi=phi+0.1f;
+	
+	Mat16 rot=Mat16::RotationX(phi);
+	
+	for (Triangle triangle : mesh.triangles) {
+	
+		Vec4 a,b,c;
+		
+		a=mesh.vertices[triangle.vertices[0]].position;
+		b=mesh.vertices[triangle.vertices[1]].position;
+		c=mesh.vertices[triangle.vertices[2]].position;
+		
+		a=a ^ rot;
+		b=b ^ rot;
+		c=c ^ rot;
+		
+		a=a ^ viewport;
+		b=b ^ viewport;
+		c=c ^ viewport;
+		
+		a.Homogeneus();
+		b.Homogeneus();
+		c.Homogeneus();
+		
+		Line(a,b);
+		Line(b,c);
+		Line(c,a);
+
+		
+	}
+}
 
 void Raster::Clear()
 {
@@ -92,33 +127,6 @@ void Raster::Clear()
 			colorBuffer->Set(i,j,0xfffdf6e3);
 		}
 	}
-	
-	static float r=0.9;
-	static float angle=0.0f;
-	
-	
-	Vec4 o;
-	Vec4 p;
-	
-	o.data[0]=0.0f;
-	o.data[1]=0.0f;
-	o.data[2]=0.0f;
-	o.data[3]=1.0f;
-	
-	p.data[0]=cos(angle)*r;
-	p.data[1]=sin(angle)*r;
-	p.data[2]=0.0f;
-	p.data[3]=1.0f;
-	
-	p=p ^ viewport;
-	o=o ^ viewport;
-	
-	p.Homogeneus();
-	o.Homogeneus();
-	
-	Line(o,p);
-	
-	angle=angle+0.05;
 }
 
 

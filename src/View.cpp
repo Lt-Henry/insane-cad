@@ -18,18 +18,25 @@
 */
 
 #include "View.hpp"
+#include "Mesh.hpp"
 
 #include <iostream>
+#include <chrono>
 
 using namespace IC;
 using namespace std;
 
+Mesh mesh;
+
 View::View()
 {
+	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::SCROLL_MASK);
+	
 	width=0;
 	height=0;
 	
 	raster=new Raster(32,32);
+	mesh=Mesh("surface.rec.ply");
 }
 
 
@@ -41,6 +48,8 @@ View::~View()
 
 bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+
+	
 
 	Gtk::Allocation allocation = get_allocation();
 	const int w = allocation.get_width();
@@ -70,8 +79,12 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	//253 246 227 base3
 	//101 123 131 base00
 	
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	
 	raster->Clear();
+	raster->Draw(mesh);
+	
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	
 	cr->set_source(buffer,0,0);
 	cr->paint();
@@ -85,7 +98,29 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->line_to(width,height/2.0);
 	cr->stroke();
 	
-
+	
+	
+	cout << "render time " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() <<" ms"<<endl;
 }
 
+bool View::on_button_press_event(GdkEventButton * button_event)
+{
+	cout<<"click"<<endl;
+	
+	return true;
+}
+
+bool View::on_scroll_event(GdkEventScroll* scroll_event)
+{
+	if (scroll_event->direction==GDK_SCROLL_UP) {
+		this->queue_draw();
+	}
+	
+	if (scroll_event->direction==GDK_SCROLL_DOWN) {
+		this->queue_draw();
+	}
+
+	
+	return true;
+}
 
