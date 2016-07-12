@@ -33,10 +33,12 @@ namespace IC
 	public:
 	
 		Mat16 viewport;
+		Mat16 projection;
 	
 		int width;
 		int height;
-	
+		
+		
 		Buffer<uint32_t>* colorBuffer;
 		Buffer<float>* depthBuffer;
 	
@@ -44,6 +46,7 @@ namespace IC
 		virtual ~ Raster();
 		
 		void Resize(int width,int height);
+		void SetOrtho(float left,float right,float top,float bottom);
 		void Draw(Mesh & mesh);
 		void Clear();
 		

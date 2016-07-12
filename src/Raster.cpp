@@ -33,6 +33,8 @@ Raster::Raster(int width,int height)
 	colorBuffer=nullptr;
 	depthBuffer=nullptr;
 	
+	projection=Mat16::Identity();
+	
 	Resize(width,height);
 }
 
@@ -61,14 +63,14 @@ void Raster::Resize(int width,int height)
 	colorBuffer=new Buffer<uint32_t>(width,height);
 	depthBuffer=new Buffer<float>(width,height);
 
-
-	viewport.data[0]=width/60.0f;
+	// viewport matrix
+	viewport.data[0]=width/2.0f;
 	viewport.data[1]=0.0f;
 	viewport.data[2]=0.0f;
 	viewport.data[3]=width/2.0f;
 	
 	viewport.data[4]=0.0f;
-	viewport.data[5]=-height/60.0f;
+	viewport.data[5]=-height/2.0f;
 	viewport.data[6]=0.0f;
 	viewport.data[7]=height/2.0f;
 	
@@ -81,7 +83,33 @@ void Raster::Resize(int width,int height)
 	viewport.data[13]=0.0f;
 	viewport.data[14]=0.0f;
 	viewport.data[15]=1.0f;
+	
 
+
+}
+
+void Raster::SetOrtho(float left,float right,float top,float bottom)
+{
+	// orthographic projection matrix
+	projection.data[0]=2.0f/(right-left);
+	projection.data[1]=0.0f;
+	projection.data[2]=0.0f;
+	projection.data[3]=-(right+left)/(right-left);
+
+	projection.data[4]=0.0f;
+	projection.data[5]=2.0f/(top-bottom);
+	projection.data[6]=0.0f;
+	projection.data[7]=-(top+bottom)/(top-bottom);
+	
+	projection.data[8]=0.0f;
+	projection.data[9]=0.0f;
+	projection.data[10]=1.0f;
+	projection.data[11]=0.0f;
+	
+	projection.data[12]=0.0f;
+	projection.data[13]=0.0f;
+	projection.data[14]=0.0f;
+	projection.data[15]=1.0f;
 }
 
 void Raster::Draw(Mesh & mesh)
@@ -92,6 +120,8 @@ void Raster::Draw(Mesh & mesh)
 	
 	Mat16 rot=Mat16::RotationX(phi);
 	
+	// line triangles
+	/*
 	for (Triangle triangle : mesh.triangles) {
 	
 		Vec4 a,b,c;
@@ -103,6 +133,10 @@ void Raster::Draw(Mesh & mesh)
 		a=a ^ rot;
 		b=b ^ rot;
 		c=c ^ rot;
+		
+		a=a ^ projection;
+		b=b ^ projection;
+		c=c ^ projection;
 		
 		a=a ^ viewport;
 		b=b ^ viewport;
@@ -117,6 +151,20 @@ void Raster::Draw(Mesh & mesh)
 		Line(c,a);
 
 		
+	}
+	*/
+	
+	// dots
+	for (Vertex & vx : mesh.vertices) {
+
+		Vec4 p = vx.position ^ rot;
+		Mat16 m = projection ^ viewport;
+		
+		p=p ^ m;
+		
+		p.Homogeneus();
+		
+		colorBuffer->Set(p.data[0],p.data[1],0xffff0000);
 	}
 }
 

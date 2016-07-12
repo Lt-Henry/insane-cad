@@ -166,4 +166,20 @@ namespace IC
 		}
 		return ret;
 	}
+	
+	Mat16 operator ^ (Mat16 & a,Mat16 & b)
+	{
+		Mat16 ret;
+		
+			for (int i=0;i<16;i+=4) {
+				for (int j=0;j<4;j++) {
+					ret.data[i + j] = (b.data[i + 0] * a.data[j +  0])
+					+ (b.data[i + 1] * a.data[j +  4])
+					+ (b.data[i + 2] * a.data[j +  8])
+					+ (b.data[i + 3] * a.data[j + 12]);
+				}
+			}
+		
+		return ret;
+	}
 }

@@ -30,13 +30,17 @@ Mesh mesh;
 
 View::View()
 {
-	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::SCROLL_MASK);
+	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
 	
 	width=0;
 	height=0;
 	
+	zoom=1.0f;
+	
 	raster=new Raster(32,32);
 	mesh=Mesh("surface.rec.ply");
+	
+	raster->SetOrtho(-zoom,zoom,zoom,-zoom);
 }
 
 
@@ -99,13 +103,22 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->stroke();
 	
 	
-	
-	cout << "render time " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() <<" ms"<<endl;
+	int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+	int fps = 1000/ms;
+	cout << "render time " << ms <<" ms ("<<fps<<") fps"<<endl;
 }
+
 
 bool View::on_button_press_event(GdkEventButton * button_event)
 {
-	cout<<"click"<<endl;
+	cout<<"press"<<endl;
+	
+	return true;
+}
+
+bool View::on_button_release_event(GdkEventButton * button_event)
+{
+	cout<<"release"<<endl;
 	
 	return true;
 }
@@ -113,11 +126,27 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 bool View::on_scroll_event(GdkEventScroll* scroll_event)
 {
 	if (scroll_event->direction==GDK_SCROLL_UP) {
+		zoom*=1.5f;
+		
+		raster->SetOrtho(-zoom,zoom,zoom,-zoom);
+		
 		this->queue_draw();
+		
+		cout<<"zoom: "<<zoom<<endl;
 	}
 	
 	if (scroll_event->direction==GDK_SCROLL_DOWN) {
+		zoom*=0.5f;
+		
+		if (zoom<0.1) {
+			zoom=0.1f;
+		}
+		
+		raster->SetOrtho(-zoom,zoom,zoom,-zoom);
+		
 		this->queue_draw();
+		
+		cout<<"zoom: "<<zoom<<endl;
 	}
 
 	

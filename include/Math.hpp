@@ -45,6 +45,7 @@ namespace IC
 	};
 	
 	Vec4 operator ^ (Vec4 & v,Mat16 & m);
+	Mat16 operator ^ (Mat16 & a,Mat16 & b);
 }
 
 
