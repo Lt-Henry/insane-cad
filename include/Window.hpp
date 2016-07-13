@@ -23,7 +23,7 @@
 
 #include "View.hpp"
 
-#include <gtkmm/window.h>
+#include <gtkmm.h>
 
 
 namespace IC
@@ -33,12 +33,19 @@ namespace IC
 	
 	protected:
 	
+		Gtk::Box box;
 		View view;
+		
+		Gtk::ScrolledWindow scroll;
+		Gtk::TextView console;
+		Gtk::Entry prompt;
 	
 	public:
 	
 		Window();
 		virtual ~Window();
+		
+		bool OnPromptKey(GdkEventKey* event);
 	
 	};
 

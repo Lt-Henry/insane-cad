@@ -31,6 +31,9 @@ Mesh mesh;
 View::View()
 {
 	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+	set_size_request(128,128);
+	set_halign(Gtk::ALIGN_FILL);
+	set_valign(Gtk::ALIGN_FILL);
 	
 	width=0;
 	height=0;

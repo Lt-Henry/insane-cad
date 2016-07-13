@@ -18,13 +18,40 @@
 */
 
 #include "Window.hpp"
+#include <iostream>
 
 using namespace IC;
+using namespace std;
 
 
 Window::Window()
 {
-	add(view);
+
+	box=Gtk::Box(Gtk::ORIENTATION_VERTICAL,4);
+	box.set_margin_top(6);
+	box.set_margin_bottom(6);
+	box.set_margin_left(6);
+	box.set_margin_right(6);
+	box.set_homogeneous(false);
+	add(box);
+
+	box.pack_start(view,true,true,0);
+	
+	
+	console=Gtk::TextView();
+	console.set_editable(false);
+	console.set_can_focus(false);
+	
+	scroll=Gtk::ScrolledWindow();
+	scroll.add(console);
+	scroll.set_size_request(-1,100);
+	box.pack_start(scroll,false,true,0);
+	
+	prompt=Gtk::Entry();
+	prompt.set_valign(Gtk::ALIGN_END);
+	box.pack_start(prompt,false,true,0);
+	
+	prompt.signal_key_release_event().connect(sigc::mem_fun(*this,&Window::OnPromptKey));
 	
 	show_all();
 }
@@ -33,4 +60,9 @@ Window::Window()
 Window::~Window()
 {
 
+}
+
+bool Window::OnPromptKey(GdkEventKey* event)
+{
+	cout<<"key"<<endl;
 }
