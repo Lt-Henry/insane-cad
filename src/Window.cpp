@@ -62,7 +62,23 @@ Window::~Window()
 
 }
 
+void Window::Print(string text)
+{
+	auto iter=console.get_buffer()->end();
+	console.get_buffer()->insert(iter,text+"\n");
+	iter=console.get_buffer()->end();
+	console.scroll_to(iter);
+}
+
 bool Window::OnPromptKey(GdkEventKey* event)
 {
-	cout<<"key"<<endl;
+	if (event->keyval==GDK_KEY_Return) {
+		string line=prompt.get_text();
+		
+		//ToDo: run?
+		
+		Print(line);
+		prompt.set_text("");
+		
+	}
 }

@@ -39,6 +39,8 @@ namespace IC
 		Gtk::ScrolledWindow scroll;
 		Gtk::TextView console;
 		Gtk::Entry prompt;
+		
+		void Print(std::string text);
 	
 	public:
 	
