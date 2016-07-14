@@ -31,12 +31,14 @@ namespace IC
 	
 	protected:
 	
-	int width;
-	int height;
+		int width;
+		int height;
 	
-	float zoom;
+		float zoom;
 	
-	Raster* raster;
+		Raster* raster;
+		
+		void UpdateOrtho();
 	
 	public:
 	

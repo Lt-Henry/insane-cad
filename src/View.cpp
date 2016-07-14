@@ -41,15 +41,28 @@ View::View()
 	zoom=1.0f;
 	
 	raster=new Raster(32,32);
-	mesh=Mesh("surface.rec.ply");
+	mesh=Mesh("CAD.ply");
 	
-	raster->SetOrtho(-zoom,zoom,zoom,-zoom);
+	UpdateOrtho();
 }
 
 
 View::~View()
 {
 	delete raster;
+}
+
+void View::UpdateOrtho()
+{
+	//set raster projection
+	float ratio = width/(float)height;
+
+	if (ratio>=1.0f) {
+		raster->SetOrtho(-zoom*ratio,zoom*ratio,zoom,-zoom);
+	}
+	else {
+		raster->SetOrtho(-zoom,zoom,zoom/ratio,-zoom/ratio);
+	}
 }
 
 
@@ -66,10 +79,14 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	if (w!=width or h!=height) {
 	
 		
+		
 		width=w;
 		height=h;
 		
+		//resize raster viewport
 		raster->Resize(width,height);
+
+		UpdateOrtho();
 	
 	}
 	
@@ -131,7 +148,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 	if (scroll_event->direction==GDK_SCROLL_UP) {
 		zoom*=1.5f;
 		
-		raster->SetOrtho(-zoom,zoom,zoom,-zoom);
+		UpdateOrtho();
 		
 		this->queue_draw();
 		
@@ -145,7 +162,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 			zoom=0.1f;
 		}
 		
-		raster->SetOrtho(-zoom,zoom,zoom,-zoom);
+		UpdateOrtho();
 		
 		this->queue_draw();
 		

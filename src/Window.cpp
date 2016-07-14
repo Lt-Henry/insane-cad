@@ -54,6 +54,9 @@ Window::Window()
 	prompt.signal_key_release_event().connect(sigc::mem_fun(*this,&Window::OnPromptKey));
 	
 	show_all();
+	
+	Print("*** insane cad ***");
+	Print("*** Copyright Enrique M.G. 2016 ***");
 }
 
 
@@ -64,10 +67,12 @@ Window::~Window()
 
 void Window::Print(string text)
 {
-	auto iter=console.get_buffer()->end();
-	console.get_buffer()->insert(iter,text+"\n");
-	iter=console.get_buffer()->end();
-	console.scroll_to(iter);
+
+	console.get_buffer()->insert_at_cursor(text+"\n");
+	auto mark=console.get_buffer()->get_insert();
+	
+	console.scroll_to(mark);
+	
 }
 
 bool Window::OnPromptKey(GdkEventKey* event)

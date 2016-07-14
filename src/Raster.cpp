@@ -121,7 +121,7 @@ void Raster::Draw(Mesh & mesh)
 	Mat16 rot=Mat16::RotationX(phi);
 	
 	// line triangles
-	/*
+	
 	for (Triangle triangle : mesh.triangles) {
 	
 		Vec4 a,b,c;
@@ -152,9 +152,10 @@ void Raster::Draw(Mesh & mesh)
 
 		
 	}
-	*/
+	
 	
 	// dots
+	/*
 	for (Vertex & vx : mesh.vertices) {
 
 		Vec4 p = vx.position ^ rot;
@@ -164,8 +165,9 @@ void Raster::Draw(Mesh & mesh)
 		
 		p.Homogeneus();
 		
-		colorBuffer->Set(p.data[0],p.data[1],0xffff0000);
+		colorBuffer->Set(p.data[0],p.data[1],0xff000000);
 	}
+	*/
 }
 
 void Raster::Clear()
