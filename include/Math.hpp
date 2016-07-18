@@ -46,6 +46,18 @@ namespace ic
 		static Mat16 Scale(float x,float y,float z);
 	};
 	
+	/*
+		Cross product
+		(vector product)
+	*/
+	Vec4 operator ^ (Vec4 & a,Vec4 & b);
+	
+	/*
+		Dot product
+		(scalar product)
+	*/
+	float operator * (Vec4 & a,Vec4 & b);
+	
 	Vec4 operator ^ (Vec4 & v,Mat16 & m);
 	Mat16 operator ^ (Mat16 & a,Mat16 & b);
 }

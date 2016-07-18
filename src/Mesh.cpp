@@ -104,14 +104,19 @@ Mesh::Mesh(string filename)
 		//vertices section
 		if (chunk=="vertices") {
 			float x,y,z;
-			//float nx,ny,nz;
+			float nx,ny,nz;
 			
 			x=stof(tokens[0]);
 			y=stof(tokens[1]);
 			z=stof(tokens[2]);
 			
+			nx=stof(tokens[3]);
+			ny=stof(tokens[4]);
+			nz=stof(tokens[5]);
+			
 			Vertex vx;
 			vx.position.Set(x,y,z,1.0f);
+			vx.normal.Set(nx,ny,nz,0.0f);
 			
 			
 			this->vertices.push_back(vx);

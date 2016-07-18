@@ -206,6 +206,29 @@ namespace ic
 	}
 
 
+	Vec4 operator ^ (Vec4 & a,Vec4 & b)
+	{
+		Vec4 ret;
+		
+		ret.data[0] = a.data[1]*b.data[2] - a.data[2]*b.data[1];
+		ret.data[1] = a.data[2]*b.data[0] - a.data[0]*b.data[2];
+		ret.data[2] = a.data[0]*b.data[1] - a.data[1]*b.data[0];
+		ret.data[3] = 0.0f;
+		
+		return ret;
+	}
+
+
+	float operator * (Vec4 & a,Vec4 & b)
+	{
+		float ret;
+		
+		ret=(a.data[0]*b.data[0]) + (a.data[1]*b.data[1]) + (a.data[2]*b.data[2]) + (a.data[3]*b.data[3]);
+	
+		return ret;
+	}
+
+
 	Vec4 operator ^ (Vec4 & v,Mat16 & m)
 	{
 		Vec4 ret;

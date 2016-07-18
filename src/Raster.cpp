@@ -114,42 +114,53 @@ void Raster::SetOrtho(float left,float right,float top,float bottom)
 
 void Raster::Draw(Mesh & mesh)
 {
+
+	Vec4 view;
+	
+	view.Set(0,0,1,0);
+
 	static float phi=0.0f;
 
 	phi=phi+0.1f;
 	
 	Mat16 rot=Mat16::RotationX(phi);
 	
+	Mat16 matrix=Mat16::Identity();
+	
+	matrix=matrix ^ rot;
+	matrix=matrix ^ projection;
+	matrix=matrix ^ viewport;
+	
 	// line triangles
 	
 	for (Triangle triangle : mesh.triangles) {
 	
 		Vec4 a,b,c;
+		Vec4 normal;
 		
 		a=mesh.vertices[triangle.vertices[0]].position;
 		b=mesh.vertices[triangle.vertices[1]].position;
 		c=mesh.vertices[triangle.vertices[2]].position;
 		
-		a=a ^ rot;
-		b=b ^ rot;
-		c=c ^ rot;
+		normal=mesh.vertices[triangle.vertices[0]].normal;
 		
-		a=a ^ projection;
-		b=b ^ projection;
-		c=c ^ projection;
+		a=a ^ matrix;
+		b=b ^ matrix;
+		c=c ^ matrix;
 		
-		a=a ^ viewport;
-		b=b ^ viewport;
-		c=c ^ viewport;
+		normal=normal ^ rot;
+		//normal.Homogeneus();
 		
 		a.Homogeneus();
 		b.Homogeneus();
 		c.Homogeneus();
 		
-		Line(a,b);
-		Line(b,c);
-		Line(c,a);
-
+		if ((view*normal)>0) {
+		
+			Line(a,b);
+			Line(b,c);
+			Line(c,a);
+		}
 		
 	}
 	
