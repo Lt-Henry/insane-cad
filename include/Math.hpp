@@ -20,7 +20,7 @@
 #ifndef _IC_MATH_
 #define _IC_MATH_
 
-namespace IC
+namespace ic
 {
 	class Vec4 {
 	public:
@@ -42,6 +42,8 @@ namespace IC
 		static Mat16 RotationX(float phi);
 		static Mat16 RotationY(float phi);
 		static Mat16 RotationZ(float phi);
+		static Mat16 Translation(float x,float y,float z);
+		static Mat16 Scale(float x,float y,float z);
 	};
 	
 	Vec4 operator ^ (Vec4 & v,Mat16 & m);

@@ -23,7 +23,7 @@
 #include <fstream>
 #include <vector>
 
-using namespace IC;
+using namespace ic;
 using namespace std;
 
 Mesh::Mesh()

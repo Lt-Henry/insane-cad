@@ -22,7 +22,7 @@
 #include <cmath>
 using namespace std;
 
-namespace IC
+namespace ic
 {
 
 	void Vec4::Set(float x,float y,float z,float w)
@@ -148,6 +148,63 @@ namespace IC
 		
 		return ret;
 	}
+	
+
+	Mat16 Mat16::Translation(float x,float y,float z)
+	{
+		Mat16 ret;
+		
+		ret.data[0]=1.0f;
+		ret.data[1]=0.0f;
+		ret.data[2]=0.0f;
+		ret.data[3]=x;
+		
+		ret.data[4]=0.0f;
+		ret.data[5]=1.0f;
+		ret.data[6]=0.0f;
+		ret.data[7]=y;
+		
+		ret.data[8]=0.0f;
+		ret.data[9]=0.0f;
+		ret.data[10]=1.0f;
+		ret.data[11]=z;
+
+		ret.data[12]=0.0f;
+		ret.data[13]=0.0f;
+		ret.data[14]=0.0f;
+		ret.data[15]=1.0f;
+		
+		return ret;
+	}
+	
+
+	Mat16 Mat16::Scale(float x,float y,float z)
+	{
+		Mat16 ret;
+		
+		ret.data[0]=x;
+		ret.data[1]=0.0f;
+		ret.data[2]=0.0f;
+		ret.data[3]=0.0f;
+		
+		ret.data[4]=0.0f;
+		ret.data[5]=y;
+		ret.data[6]=0.0f;
+		ret.data[7]=0.0f;
+		
+		ret.data[8]=0.0f;
+		ret.data[9]=0.0f;
+		ret.data[10]=z;
+		ret.data[11]=0.0f;
+
+		ret.data[12]=0.0f;
+		ret.data[13]=0.0f;
+		ret.data[14]=0.0f;
+		ret.data[15]=1.0f;
+		
+		return ret;
+	}
+
 
 	Vec4 operator ^ (Vec4 & v,Mat16 & m)
 	{

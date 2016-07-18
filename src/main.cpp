@@ -24,7 +24,7 @@
 #include <gtkmm/application.h>
 
 using namespace std;
-using namespace IC;
+using namespace ic;
 
 
 

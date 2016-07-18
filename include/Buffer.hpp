@@ -22,7 +22,7 @@
 
 #include <stdexcept>
 
-namespace IC
+namespace ic
 {
 	template <class T>
 	class Buffer {

@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-namespace IC
+namespace ic
 {
 	class Vertex {
 	public:

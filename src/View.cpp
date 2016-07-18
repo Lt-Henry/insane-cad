@@ -23,7 +23,7 @@
 #include <iostream>
 #include <chrono>
 
-using namespace IC;
+using namespace ic;
 using namespace std;
 
 Mesh mesh;

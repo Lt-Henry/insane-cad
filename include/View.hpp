@@ -25,7 +25,7 @@
 #include <gtkmm/drawingarea.h>
 
 
-namespace IC
+namespace ic
 {
 	class View : public Gtk::DrawingArea {
 	

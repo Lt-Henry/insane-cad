@@ -23,7 +23,7 @@
 #include <iostream>
 #include <cmath>
 
-using namespace IC;
+using namespace ic;
 using namespace std;
 
 

@@ -26,7 +26,7 @@
 #include <gtkmm.h>
 
 
-namespace IC
+namespace ic
 {
 
 	class Window : public Gtk::Window {

@@ -27,7 +27,7 @@
 #include <cstdint>
 
 
-namespace IC
+namespace ic
 {
 	class Raster {
 	public:

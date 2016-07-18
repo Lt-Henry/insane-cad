@@ -20,7 +20,7 @@
 #include "Window.hpp"
 #include <iostream>
 
-using namespace IC;
+using namespace ic;
 using namespace std;
 
 
