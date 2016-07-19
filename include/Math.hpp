@@ -28,8 +28,13 @@ namespace ic
 		float data[4];
 		
 		
+		Vec4();
+		Vec4(float x,float y,float z,float w=0.0f);
+		
 		void Set(float x,float y,float z,float w=0.0f);
 		void Homogeneus();
+		float Norm();
+		void Normalize();
 	};
 	
 	
@@ -45,6 +50,8 @@ namespace ic
 		static Mat16 Translation(float x,float y,float z);
 		static Mat16 Scale(float x,float y,float z);
 	};
+	
+	Vec4 operator - (Vec4 & a, Vec4 & b);
 	
 	/*
 		Cross product

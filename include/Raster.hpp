@@ -34,6 +34,7 @@ namespace ic
 	
 		Mat16 viewport;
 		Mat16 projection;
+		Mat16 camera;
 	
 		int width;
 		int height;

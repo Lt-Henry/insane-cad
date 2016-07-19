@@ -133,6 +133,9 @@ void Raster::Draw(Mesh & mesh)
 	
 	// line triangles
 	
+	int t=0;
+	int dr=0;
+	
 	for (Triangle triangle : mesh.triangles) {
 	
 		Vec4 a,b,c;
@@ -148,23 +151,24 @@ void Raster::Draw(Mesh & mesh)
 		b=b ^ matrix;
 		c=c ^ matrix;
 		
-		normal=normal ^ rot;
+		normal=normal ^ matrix;
 		//normal.Homogeneus();
 		
 		a.Homogeneus();
 		b.Homogeneus();
 		c.Homogeneus();
 		
+		t++;
 		if ((view*normal)>0) {
-		
 			Line(a,b);
 			Line(b,c);
 			Line(c,a);
+			dr++;
 		}
 		
 	}
 	
-	
+	cout<<"draw "<<dr<<" out of "<<t<<" triangles"<<endl;
 	// dots
 	/*
 	for (Vertex & vx : mesh.vertices) {

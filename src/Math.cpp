@@ -25,6 +25,18 @@ using namespace std;
 namespace ic
 {
 
+	Vec4()
+	{
+	
+	}
+
+
+	Vec4(float x,float y,float z,float w)
+	{
+		Set(x,y,z,w);
+	}
+
+
 	void Vec4::Set(float x,float y,float z,float w)
 	{
 		data[0]=x;
@@ -33,6 +45,7 @@ namespace ic
 		data[3]=w;
 	}
 
+
 	void Vec4::Homogeneus()
 	{
 		data[0]=data[0]/data[3];
@@ -40,6 +53,25 @@ namespace ic
 		data[2]=data[2]/data[3];
 		data[3]=1.0f;
 	}
+
+
+	float Vec4::Norm()
+	{
+		float tmp=(data[0]*data[0])+(data[1]*data[1])+(data[2]*data[2])+(data[3]*data[3]);
+		
+		return sqrt(tmp);
+	}
+
+
+	void Vec4::Normalize()
+	{
+		float norm=Norm();
+		data[0]=data[0]/norm;
+		data[1]=data[1]/norm;
+		data[2]=data[2]/norm;
+		data[3]=data[3]/norm;
+	}
+
 
 	Mat16 Mat16::Identity()
 	{
@@ -201,6 +233,19 @@ namespace ic
 		ret.data[13]=0.0f;
 		ret.data[14]=0.0f;
 		ret.data[15]=1.0f;
+		
+		return ret;
+	}
+
+
+	Vec4 operator - (Vec4 & a, Vec4 & b)
+	{
+		Vec4 ret;
+		
+		ret.data[0]=a.data[0]-b.data[0];
+		ret.data[1]=a.data[1]-b.data[1];
+		ret.data[2]=a.data[2]-b.data[2];
+		ret.data[3]=a.data[3]-b.data[3];
 		
 		return ret;
 	}
