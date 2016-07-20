@@ -25,13 +25,13 @@ using namespace std;
 namespace ic
 {
 
-	Vec4()
+	Vec4::Vec4()
 	{
 	
 	}
 
 
-	Vec4(float x,float y,float z,float w)
+	Vec4::Vec4(float x,float y,float z,float w)
 	{
 		Set(x,y,z,w);
 	}

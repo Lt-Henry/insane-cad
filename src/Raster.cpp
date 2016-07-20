@@ -34,6 +34,7 @@ Raster::Raster(int width,int height)
 	depthBuffer=nullptr;
 	
 	projection=Mat16::Identity();
+	camera=Mat16::Identity();
 	
 	Resize(width,height);
 }
@@ -112,6 +113,34 @@ void Raster::SetOrtho(float left,float right,float top,float bottom)
 	projection.data[15]=1.0f;
 }
 
+
+void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
+{
+	Vec4 right = forward ^ up;
+	Vec4 realUp = forward ^ right;
+	
+	camera.data[0]=right.data[0];
+	camera.data[1]=right.data[1];
+	camera.data[2]=right.data[2];
+	camera.data[3]=0.0f;
+	
+	camera.data[4]=realUp.data[0];
+	camera.data[5]=realUp.data[1];
+	camera.data[6]=realUp.data[2];
+	camera.data[7]=0.0f;
+	
+	camera.data[8]=forward.data[0];
+	camera.data[9]=forward.data[1];
+	camera.data[10]=forward.data[2];
+	camera.data[11]=0.0f;
+	
+	camera.data[12]=0.0f;
+	camera.data[13]=0.0f;
+	camera.data[14]=0.0f;
+	camera.data[15]=1.0f;
+}
+
+
 void Raster::Draw(Mesh & mesh)
 {
 
@@ -119,22 +148,14 @@ void Raster::Draw(Mesh & mesh)
 	
 	view.Set(0,0,1,0);
 
-	static float phi=0.0f;
-
-	phi=phi+0.1f;
-	
-	Mat16 rot=Mat16::RotationX(phi);
-	
 	Mat16 matrix=Mat16::Identity();
 	
-	matrix=matrix ^ rot;
+	matrix=matrix ^ camera;
 	matrix=matrix ^ projection;
 	matrix=matrix ^ viewport;
 	
 	// line triangles
 	
-	int t=0;
-	int dr=0;
 	
 	for (Triangle triangle : mesh.triangles) {
 	
@@ -158,17 +179,14 @@ void Raster::Draw(Mesh & mesh)
 		b.Homogeneus();
 		c.Homogeneus();
 		
-		t++;
 		if ((view*normal)>0) {
 			Line(a,b);
 			Line(b,c);
 			Line(c,a);
-			dr++;
 		}
 		
 	}
 	
-	cout<<"draw "<<dr<<" out of "<<t<<" triangles"<<endl;
 	// dots
 	/*
 	for (Vertex & vx : mesh.vertices) {

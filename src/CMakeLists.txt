@@ -1,6 +1,6 @@
 
 #main 
-add_executable(insane-cad main.cpp Window.cpp View.cpp Raster.cpp Math.cpp Mesh.cpp)
+add_executable(insane-cad main.cpp Core.cpp Window.cpp View.cpp Raster.cpp Math.cpp Mesh.cpp)
 
 #require pkg-config support
 find_package(PkgConfig REQUIRED)

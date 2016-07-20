@@ -48,6 +48,7 @@ namespace ic
 		
 		void Resize(int width,int height);
 		void SetOrtho(float left,float right,float top,float bottom);
+		void SetCamera(Vec4 origin,Vec4 forward,Vec4 up);
 		void Draw(Mesh & mesh);
 		void Clear();
 		

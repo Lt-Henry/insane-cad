@@ -17,8 +17,10 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Core.hpp"
 #include "Window.hpp"
 #include <iostream>
+#include <sstream>
 
 using namespace ic;
 using namespace std;
@@ -84,6 +86,38 @@ bool Window::OnPromptKey(GdkEventKey* event)
 		
 		Print(line);
 		prompt.set_text("");
+		
+		istringstream iss(line);
+		
+		vector<string> tokens;
+		
+		while (iss) {
+		
+			string sub;
+			iss >> sub;
+			tokens.push_back(sub);
+		}
+		
+		
+		if (tokens[0]=="top") {
+			view.raster->SetCamera(Vec4(0,0,0,1),Vec4(0,1,0,0),Vec4(1,0,0,0));
+			view.Update();
+		}
+		if (tokens[0]=="front") {
+			view.raster->SetCamera(Vec4(0,0,0,1),Vec4(0,0,1,0),Vec4(0,1,0,0));
+			view.Update();
+		}
+		
+		if (tokens[0]=="load") {
+			if (tokens.size() > 1 ) {
+				Print("Loading: "+tokens[1]);
+				Mesh mesh(tokens[1]);
+				Core::Get()->meshes.push_back(mesh);
+				Print("done");
+				view.Update();
+			}
+		}
+
 		
 	}
 }

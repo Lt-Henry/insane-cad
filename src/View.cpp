@@ -17,6 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Core.hpp"
 #include "View.hpp"
 #include "Mesh.hpp"
 
@@ -26,7 +27,6 @@
 using namespace ic;
 using namespace std;
 
-Mesh mesh;
 
 View::View()
 {
@@ -41,8 +41,7 @@ View::View()
 	zoom=1.0f;
 	
 	raster=new Raster(32,32);
-	mesh=Mesh("CAD.ply");
-	
+
 	UpdateOrtho();
 }
 
@@ -63,6 +62,12 @@ void View::UpdateOrtho()
 	else {
 		raster->SetOrtho(-zoom,zoom,zoom/ratio,-zoom/ratio);
 	}
+}
+
+
+void View::Update()
+{
+	this->queue_draw();
 }
 
 
@@ -106,7 +111,10 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	
 	raster->Clear();
-	raster->Draw(mesh);
+	
+	for (Mesh & mesh : Core::Get()->meshes) {
+		raster->Draw(mesh);
+	}
 	
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	
@@ -124,6 +132,8 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	
 	
 	int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+	ms=std::max(1,ms);
+	
 	int fps = 1000/ms;
 	cout << "render time " << ms <<" ms ("<<fps<<") fps"<<endl;
 }
@@ -150,7 +160,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 		
 		UpdateOrtho();
 		
-		this->queue_draw();
+		Update();
 		
 		cout<<"zoom: "<<zoom<<endl;
 	}
@@ -164,7 +174,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 		
 		UpdateOrtho();
 		
-		this->queue_draw();
+		Update();
 		
 		cout<<"zoom: "<<zoom<<endl;
 	}

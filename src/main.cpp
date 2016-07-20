@@ -17,11 +17,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Window.hpp"
+#include "Core.hpp"
 
 #include <iostream>
 
-#include <gtkmm/application.h>
+
 
 using namespace std;
 using namespace ic;
@@ -34,11 +34,7 @@ int main (int argc,char* argv[])
 	
 	cout<<"Welcome to insane cad"<<endl;
 	
-	auto app = Gtk::Application::create(argc, argv, "es.opencircus.insane-cad");
-
-	Window mainWindow;
-
-	return app->run(mainWindow);
-
+	Core core;
+	return core.Run(argc,argv);
 
 }

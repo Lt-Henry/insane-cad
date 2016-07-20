@@ -17,47 +17,38 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_VIEW_
-#define _IC_VIEW_
+#include "Core.hpp"
+#include "Window.hpp"
 
-#include "Raster.hpp"
+#include <gtkmm.h>
+#include <stdexcept>
 
-#include <gtkmm/drawingarea.h>
+using namespace ic;
+using namespace std;
 
+Core* Core::singleton=nullptr;
 
-namespace ic
+Core::Core()
 {
-	class View : public Gtk::DrawingArea {
-	
-	protected:
-	
-		int width;
-		int height;
-	
-		float zoom;
-	
-		
-		
-		void UpdateOrtho();
-	
-	public:
-	
-		Raster* raster;
-		
-		View();
-		virtual ~View();
-		
-		void Update();
-		
-		//overload draw method
-		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-		bool on_button_press_event(GdkEventButton * button_event) override;
-		bool on_button_release_event(GdkEventButton * button_event) override;
-		bool on_scroll_event(GdkEventScroll* scroll_event) override;
+	if (Core::singleton==nullptr) {
+		Core::singleton=this;
+	}
+	else {
+		throw runtime_error("There is already a Core instance");
+	}
+}
 
-
-	};
+Core* Core::Get()
+{
+	return Core::singleton;
 }
 
 
-#endif
+int Core::Run(int argc,char* argv[])
+{
+	auto app = Gtk::Application::create(argc, argv, "es.opencircus.insane-cad");
+
+	Window mainWindow;
+
+	return app->run(mainWindow);
+}

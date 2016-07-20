@@ -17,47 +17,31 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_VIEW_
-#define _IC_VIEW_
+#ifndef _IC_CORE_
+#define _IC_CORE_
 
-#include "Raster.hpp"
+#include "Mesh.hpp"
 
-#include <gtkmm/drawingarea.h>
-
+#include <vector>
 
 namespace ic
 {
-	class View : public Gtk::DrawingArea {
+	class Core {
 	
-	protected:
-	
-		int width;
-		int height;
-	
-		float zoom;
-	
+	private:
+		static Core* singleton;
 		
 		
-		void UpdateOrtho();
-	
 	public:
 	
-		Raster* raster;
+		std::vector<Mesh> meshes;
+	
+		Core();
 		
-		View();
-		virtual ~View();
+		static Core* Get();
 		
-		void Update();
-		
-		//overload draw method
-		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-		bool on_button_press_event(GdkEventButton * button_event) override;
-		bool on_button_release_event(GdkEventButton * button_event) override;
-		bool on_scroll_event(GdkEventScroll* scroll_event) override;
-
-
+		int Run(int argc,char* argv[]);
 	};
 }
-
 
 #endif
