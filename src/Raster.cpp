@@ -221,6 +221,10 @@ void Raster::Line(Vec4 & a,Vec4 & b)
 	float x2=b.data[0];
 	float y2=b.data[1];
 	
+	Color c(0.5,0.5,0.5);
+	
+	uint32_t color=c.Pixel();
+	
 	// Credits: https://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C.2B.2B
 	// Bresenham's line algorithm
 	
@@ -246,10 +250,10 @@ void Raster::Line(Vec4 & a,Vec4 & b)
 
 	for (int x=(int)x1; x<maxX; x++) {
 		if (steep) {
-			colorBuffer->Set(y,x,0xff000000);
+			colorBuffer->Set(y,x,color);
 		}
 		else {
-			colorBuffer->Set(x,y,0xff000000);
+			colorBuffer->Set(x,y,color);
 		}
 
 		error -= dy;

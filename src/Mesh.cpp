@@ -117,7 +117,7 @@ Mesh::Mesh(string filename)
 			Vertex vx;
 			vx.position.Set(x,y,z,1.0f);
 			vx.normal.Set(nx,ny,nz,0.0f);
-			
+			vx.color.Set(101,123,131);
 			
 			this->vertices.push_back(vx);
 			

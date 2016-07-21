@@ -36,6 +36,8 @@ namespace ic
 	
 		float zoom;
 	
+		/* computed ortho limits */
+		float left,right,top,bottom;
 		
 		
 		void UpdateOrtho();

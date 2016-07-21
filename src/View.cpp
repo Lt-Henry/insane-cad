@@ -43,6 +43,7 @@ View::View()
 	raster=new Raster(32,32);
 
 	UpdateOrtho();
+	
 }
 
 
@@ -57,11 +58,19 @@ void View::UpdateOrtho()
 	float ratio = width/(float)height;
 
 	if (ratio>=1.0f) {
-		raster->SetOrtho(-zoom*ratio,zoom*ratio,zoom,-zoom);
+		left=-zoom*ratio;
+		right=zoom*ratio;
+		top=zoom;
+		bottom=-zoom;
 	}
 	else {
-		raster->SetOrtho(-zoom,zoom,zoom/ratio,-zoom/ratio);
+		left=-zoom;
+		right=zoom;
+		top=zoom/ratio;
+		bottom=-zoom/ratio;
 	}
+	
+	raster->SetOrtho(left,right,top,bottom);
 }
 
 
@@ -141,7 +150,29 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 bool View::on_button_press_event(GdkEventButton * button_event)
 {
+	float mx=button_event->x;
+	float my=button_event->y;
+	
+	Gtk::Allocation allocation = get_allocation();
+	const int w = allocation.get_width();
+	const int h = allocation.get_height();
+	
 	cout<<"press"<<endl;
+	cout<<"mouse coords: "<<mx<<","<<my<<endl;
+	
+	float x=mx/(float)w;
+	float y=my/(float)h;
+	
+	float dw=(right-left);
+	float dh=(top-bottom);
+	
+	x=x*dw - (dw/2.0f);
+	y=y*dh - (dh/2.0f);
+	
+	cout<<"world coords: "<<x<<","<<y<<endl;
+	
+	cout<<"left:"<<left<<endl;
+	cout<<"right:"<<right<<endl;
 	
 	return true;
 }

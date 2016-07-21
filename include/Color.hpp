@@ -17,40 +17,27 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _IC_MESH_
-#define _IC_MESH_
+#ifndef _IC_COLOR_
+#define _IC_COLOR_
 
-#include "Math.hpp"
-#include "Color.hpp"
-
-#include <string>
-#include <vector>
+#include <cstdint>
 
 namespace ic
 {
-	class Vertex {
+	class Color {
 	public:
-		Vec4 position;
-		Vec4 normal;
-		Color color;
-	};
 	
-	
-	class Triangle {
-	public:
-		unsigned int vertices[3];
-	};
-	
-	
-	class Mesh {
-	public:
-		std::string name;
-		std::vector<Vertex> vertices;
-		std::vector<Triangle> triangles;
+		float data[4];
 		
-		Mesh();
-		Mesh(std::string filename);
+		
+		Color();
+		Color(float r,float g,float b,float a=1.0f);
+		
+		void Set(float r,float g,float b,float a=1.0f);
+		
+		uint32_t Pixel();
 	};
 }
+
 
 #endif
