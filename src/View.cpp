@@ -30,7 +30,7 @@ using namespace std;
 
 View::View()
 {
-	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK);
+	add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK | Gdk::POINTER_MOTION_MASK);
 	set_size_request(128,128);
 	set_halign(Gtk::ALIGN_FILL);
 	set_valign(Gtk::ALIGN_FILL);
@@ -39,6 +39,9 @@ View::View()
 	height=0;
 	
 	zoom=1.0f;
+	phi=0.0f;
+	
+	buttonStatus==ButtonStatus::Released;
 	
 	raster=new Raster(32,32);
 
@@ -171,8 +174,9 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 	
 	cout<<"world coords: "<<x<<","<<y<<endl;
 	
-	cout<<"left:"<<left<<endl;
-	cout<<"right:"<<right<<endl;
+	buttonStatus=ButtonStatus::Pressed;
+	this->pressX=mx;
+	this->phiDelta=0.0f;
 	
 	return true;
 }
@@ -180,6 +184,9 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 bool View::on_button_release_event(GdkEventButton * button_event)
 {
 	cout<<"release"<<endl;
+	buttonStatus=ButtonStatus::Released;
+	
+	this->phi=this->phiDelta;
 	
 	return true;
 }
@@ -214,3 +221,29 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 	return true;
 }
 
+
+bool View::on_motion_notify_event(GdkEventMotion* motion_event)
+{
+
+	float mx=motion_event->x;
+	float my=motion_event->y;
+	
+
+	
+	if (buttonStatus==ButtonStatus::Pressed) {
+			float delta=mx-this->pressX;
+			
+			 
+			
+			this->phiDelta=this->phi-(delta/(float)this->width);
+			
+			float px=cos(this->phiDelta);
+			float pz=sin(this->phiDelta);
+			
+			
+			raster->SetCamera(Vec4(0,0,0,1),Vec4(px,0,pz,0),Vec4(0,1,0,0));
+			Update();
+	}
+	
+	return true;
+}

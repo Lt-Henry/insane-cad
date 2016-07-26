@@ -27,6 +27,12 @@
 
 namespace ic
 {
+
+	enum class ButtonStatus {
+		Pressed,
+		Released
+	};
+	
 	class View : public Gtk::DrawingArea {
 	
 	protected:
@@ -39,6 +45,11 @@ namespace ic
 		/* computed ortho limits */
 		float left,right,top,bottom;
 		
+		ButtonStatus buttonStatus;
+		
+		float pressX;
+		float phi;
+		float phiDelta;
 		
 		void UpdateOrtho();
 	
@@ -53,9 +64,11 @@ namespace ic
 		
 		//overload draw method
 		bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-		bool on_button_press_event(GdkEventButton * button_event) override;
-		bool on_button_release_event(GdkEventButton * button_event) override;
+		bool on_button_press_event(GdkEventButton* button_event) override;
+		bool on_button_release_event(GdkEventButton* button_event) override;
 		bool on_scroll_event(GdkEventScroll* scroll_event) override;
+		bool on_motion_notify_event(GdkEventMotion* motion_event) override;
+
 
 
 	};
