@@ -116,8 +116,15 @@ void Raster::SetOrtho(float left,float right,float top,float bottom)
 
 void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
 {
+	forward.Normalize();
 	Vec4 right = forward ^ up;
+	right.Normalize();
 	Vec4 realUp = forward ^ right;
+	
+	cout<<"forward: "<<forward.data[0]<<" "<<forward.data[1]<<" "<<forward.data[2]<<endl;
+	cout<<"right: "<<right.data[0]<<" "<<right.data[1]<<" "<<right.data[2]<<endl;
+	cout<<"realUp: "<<realUp.data[0]<<" "<<realUp.data[1]<<" "<<realUp.data[2]<<endl;
+		
 	
 	camera.data[0]=right.data[0];
 	camera.data[1]=right.data[1];

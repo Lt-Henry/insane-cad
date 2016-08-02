@@ -41,7 +41,7 @@ View::View()
 	zoom=1.0f;
 	phi=0.0f;
 	
-	buttonStatus==ButtonStatus::Released;
+	buttonStatus=ButtonStatus::Released;
 	
 	raster=new Raster(32,32);
 
@@ -177,6 +177,8 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 	buttonStatus=ButtonStatus::Pressed;
 	this->pressX=mx;
 	this->phiDelta=0.0f;
+	this->pressY=my;
+	this->thetaDelta=0.0f;
 	
 	return true;
 }
@@ -187,6 +189,7 @@ bool View::on_button_release_event(GdkEventButton * button_event)
 	buttonStatus=ButtonStatus::Released;
 	
 	this->phi=this->phiDelta;
+	this->theta=this->thetaDelta;
 	
 	return true;
 }
@@ -231,17 +234,32 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
 
 	
 	if (buttonStatus==ButtonStatus::Pressed) {
-			float delta=mx-this->pressX;
-			
-			 
-			
-			this->phiDelta=this->phi-(delta/(float)this->width);
-			
-			float px=cos(this->phiDelta);
-			float pz=sin(this->phiDelta);
+			float deltax=mx-this->pressX;
+			float deltay=this->pressY-my;
 			
 			
-			raster->SetCamera(Vec4(0,0,0,1),Vec4(px,0,pz,0),Vec4(0,1,0,0));
+			
+			this->phiDelta=this->phi-(deltax/(float)this->width);
+			this->thetaDelta=this->theta-(deltay/(float)this->height);
+			
+			if (this->thetaDelta > (M_PI-0.05f)) {
+				this->thetaDelta=M_PI-0.05f;
+			}
+			
+			if (this->thetaDelta < 0.05f) {
+				this->thetaDelta=0.05f;
+			}
+
+			
+			
+			float px=sin(this->thetaDelta)*cos(this->phiDelta);
+			float pz=sin(this->thetaDelta)*sin(this->phiDelta);
+			float py=cos(this->thetaDelta);
+			
+			
+			Vec4 forward(px,py,pz,0);
+			
+			raster->SetCamera(Vec4(0,0,0,1),forward,Vec4(0,1,0,0));
 			Update();
 	}
 	

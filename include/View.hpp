@@ -47,9 +47,9 @@ namespace ic
 		
 		ButtonStatus buttonStatus;
 		
-		float pressX;
-		float phi;
-		float phiDelta;
+		float pressX,pressY;
+		float phi,theta;
+		float phiDelta,thetaDelta;
 		
 		void UpdateOrtho();
 	
