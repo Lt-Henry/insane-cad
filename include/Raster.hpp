@@ -20,9 +20,9 @@
 #ifndef _IC_RASTER_
 #define _IC_RASTER_
 
-#include "Mesh.hpp"
 #include "Buffer.hpp"
 #include "Math.hpp"
+#include "Vbo.hpp"
 
 #include <cstdint>
 
@@ -49,10 +49,11 @@ namespace ic
 		void Resize(int width,int height);
 		void SetOrtho(float left,float right,float top,float bottom);
 		void SetCamera(Vec4 origin,Vec4 forward,Vec4 up);
-		void Draw(Mesh & mesh);
+		void Draw(Vbo & vbo);
 		void Clear();
 		
-		void Line(Vec4 & a,Vec4 & b);
+		void Line(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2);
+		void Point(Vec4 & v1,Vec4 & n1,Color & c1);
 		
 	};
 }

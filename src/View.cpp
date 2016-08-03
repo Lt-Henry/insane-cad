@@ -44,6 +44,27 @@ View::View()
 	buttonStatus=ButtonStatus::Released;
 	
 	raster=new Raster(32,32);
+	
+	//build axis vbo
+	axis=Vbo(Primitive::Line);
+	
+	axis.Load(Vec4(0,0,0,1),Vec4(1,0,0),Color(1,0,0));
+	axis.Push();
+	
+	axis.Load(Vec4(10,0,0,1),Vec4(1,0,0),Color(1,0,0));
+	axis.Push();
+	
+	axis.Load(Vec4(0,0,0,1),Vec4(0,1,0),Color(0,1,0));
+	axis.Push();
+	
+	axis.Load(Vec4(0,10,0,1),Vec4(0,1,0),Color(0,1,0));
+	axis.Push();
+	
+	axis.Load(Vec4(0,0,0,1),Vec4(0,0,1),Color(0,0,1));
+	axis.Push();
+	
+	axis.Load(Vec4(0,0,10,1),Vec4(0,0,1),Color(0,0,1));
+	axis.Push();
 
 	UpdateOrtho();
 	
@@ -125,14 +146,16 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	raster->Clear();
 	
 	for (Mesh & mesh : Core::Get()->meshes) {
-		raster->Draw(mesh);
+		raster->Draw(mesh.vbo);
 	}
+	
+	raster->Draw(this->axis);
 	
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	
 	cr->set_source(buffer,0,0);
 	cr->paint();
-	
+	/*
 	cr->set_source_rgb(0.39, 0.48, 0.51);
 	cr->move_to(width/2.0,0);
 	cr->line_to(width/2.0,height);
@@ -141,7 +164,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->move_to(0,height/2.0);
 	cr->line_to(width,height/2.0);
 	cr->stroke();
-	
+	*/
 	
 	int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
 	ms=std::max(1,ms);

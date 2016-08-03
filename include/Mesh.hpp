@@ -22,6 +22,7 @@
 
 #include "Math.hpp"
 #include "Color.hpp"
+#include "Vbo.hpp"
 
 #include <string>
 #include <vector>
@@ -44,12 +45,19 @@ namespace ic
 	
 	class Mesh {
 	public:
+		Vbo vbo;
+	
 		std::string name;
 		std::vector<Vertex> vertices;
 		std::vector<Triangle> triangles;
 		
 		Mesh();
 		Mesh(std::string filename);
+		
+		void Select(Vec4 center,float radius);
+		void Select(Vec4 point,Vec4 normal,float distance);
+		
+		void BuildVbo();
 	};
 }
 

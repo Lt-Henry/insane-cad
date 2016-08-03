@@ -112,6 +112,10 @@ bool Window::OnPromptKey(GdkEventKey* event)
 			if (tokens.size() > 1 ) {
 				Print("Loading: "+tokens[1]);
 				Mesh mesh(tokens[1]);
+				//mesh.Select(Vec4(23,0,0,1),10.0f);
+				mesh.Select(Vec4(23,0,0,1),Vec4(1,0,0),5.0f);
+				
+				mesh.BuildVbo();
 				Core::Get()->meshes.push_back(mesh);
 				Print("done");
 				view.Update();

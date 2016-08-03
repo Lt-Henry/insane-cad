@@ -22,6 +22,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cmath>
 
 using namespace ic;
 using namespace std;
@@ -117,7 +118,7 @@ Mesh::Mesh(string filename)
 			Vertex vx;
 			vx.position.Set(x,y,z,1.0f);
 			vx.normal.Set(nx,ny,nz,0.0f);
-			vx.color.Set(101,123,131);
+			vx.color.Set(0.3f,0.3f,0.3f);
 			
 			this->vertices.push_back(vx);
 			
@@ -161,3 +162,65 @@ Mesh::Mesh(string filename)
 	fs.close();
 }
 
+void Mesh::Select(Vec4 center,float radius)
+{
+	for (Vertex & vertex : vertices) {
+		
+		Vec4 pc=vertex.position - center;
+		
+		if (pc.Norm()<radius) {
+			vertex.color=Color(0,0.4f,0.9f);
+		}
+	}
+}
+
+
+void Mesh::Select(Vec4 point,Vec4 normal,float distance)
+{
+	for (Vertex & vertex : vertices) {
+
+		Vec4 b=vertex.position-point;
+		
+		float dist=b*normal;
+		
+		if (std::fabs(dist)<distance) {
+			vertex.color=Color(0,0.4f,0.9f);
+		}
+	}
+}
+
+
+void Mesh::BuildVbo()
+{
+
+	vbo=Vbo(Primitive::Point);
+	
+	for (Triangle triangle : triangles) {
+		
+		Vec4 v;
+		Vec4 n;
+		Color c;
+		
+		v=vertices[triangle.vertices[0]].position;
+		n=vertices[triangle.vertices[0]].normal;
+		c=vertices[triangle.vertices[0]].color;
+		
+		vbo.Load(v,n,c);
+		vbo.Push();
+		
+		v=vertices[triangle.vertices[1]].position;
+		n=vertices[triangle.vertices[1]].normal;
+		c=vertices[triangle.vertices[1]].color;
+		
+		vbo.Load(v,n,c);
+		vbo.Push();
+
+		v=vertices[triangle.vertices[2]].position;
+		n=vertices[triangle.vertices[2]].normal;
+		c=vertices[triangle.vertices[2]].color;
+		
+		vbo.Load(v,n,c);
+		vbo.Push();
+
+	}
+}

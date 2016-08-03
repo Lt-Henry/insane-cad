@@ -121,11 +121,6 @@ void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
 	right.Normalize();
 	Vec4 realUp = forward ^ right;
 	
-	cout<<"forward: "<<forward.data[0]<<" "<<forward.data[1]<<" "<<forward.data[2]<<endl;
-	cout<<"right: "<<right.data[0]<<" "<<right.data[1]<<" "<<right.data[2]<<endl;
-	cout<<"realUp: "<<realUp.data[0]<<" "<<realUp.data[1]<<" "<<realUp.data[2]<<endl;
-		
-	
 	camera.data[0]=right.data[0];
 	camera.data[1]=right.data[1];
 	camera.data[2]=right.data[2];
@@ -148,89 +143,116 @@ void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
 }
 
 
-void Raster::Draw(Mesh & mesh)
+void Raster::Draw(Vbo & vbo)
 {
-
-	Vec4 view;
-	
-	view.Set(0,0,1,0);
-
 	Mat16 matrix=Mat16::Identity();
 	
 	matrix=matrix ^ camera;
 	matrix=matrix ^ projection;
 	matrix=matrix ^ viewport;
 	
-	// line triangles
+	switch (vbo.Type()) {
 	
+		case Primitive::None:
+			//Nothing to do here :)
+		break;
 	
-	for (Triangle triangle : mesh.triangles) {
+		case Primitive::Triangle:
+			for (int n=0;n<vbo.Size();n+=3) {
+				Vec4 v1 = vbo.vertices[n] ^ matrix;
+				Vec4 v2 = vbo.vertices[n+1] ^ matrix;
+				Vec4 v3 = vbo.vertices[n+2] ^ matrix;
+				
+				v1.Homogeneus();
+				v2.Homogeneus();
+				v3.Homogeneus();
+				
+				Line(v1,
+					vbo.normals[n],
+					vbo.colors[n],
+					v2,
+					vbo.normals[n+1],
+					vbo.colors[n+1]);
+					
+				Line(v1,
+					vbo.normals[n],
+					vbo.colors[n],
+					v3,
+					vbo.normals[n+2],
+					vbo.colors[n+2]);
+					
+				Line(v2,
+					vbo.normals[n+1],
+					vbo.colors[n+1],
+					v3,
+					vbo.normals[n+2],
+					vbo.colors[n+2]);
+					
+					
+			}
+		
+		break;
+		
+		case Primitive::Line:
+			for (int n=0;n<vbo.Size();n+=2) {
+			
+				Vec4 v1 = vbo.vertices[n] ^ matrix;
+				Vec4 v2 = vbo.vertices[n+1] ^ matrix;
+				
+				
+				v1.Homogeneus();
+				v2.Homogeneus();
+				
+				Line(v1,
+					vbo.normals[n],
+					vbo.colors[n],
+					v2,
+					vbo.normals[n+1],
+					vbo.colors[n+1]);
+			}
+		
+		break;
+		
+		case Primitive::Point:
+			for (int n=0;n<vbo.Size();n++) {
+				
+				Vec4 v1 = vbo.vertices[n] ^ matrix;
+				
+				v1.Homogeneus();
+				
+				Point(v1,
+					vbo.normals[n],
+					vbo.colors[n]);
+			}
+			
+		break;
 	
-		Vec4 a,b,c;
-		Vec4 normal;
-		
-		a=mesh.vertices[triangle.vertices[0]].position;
-		b=mesh.vertices[triangle.vertices[1]].position;
-		c=mesh.vertices[triangle.vertices[2]].position;
-		
-		normal=mesh.vertices[triangle.vertices[0]].normal;
-		
-		a=a ^ matrix;
-		b=b ^ matrix;
-		c=c ^ matrix;
-		
-		normal=normal ^ matrix;
-		//normal.Homogeneus();
-		
-		a.Homogeneus();
-		b.Homogeneus();
-		c.Homogeneus();
-		
-		if ((view*normal)>0) {
-			Line(a,b);
-			Line(b,c);
-			Line(c,a);
-		}
-		
 	}
-	
-	// dots
-	/*
-	for (Vertex & vx : mesh.vertices) {
-
-		Vec4 p = vx.position ^ rot;
-		Mat16 m = projection ^ viewport;
-		
-		p=p ^ m;
-		
-		p.Homogeneus();
-		
-		colorBuffer->Set(p.data[0],p.data[1],0xff000000);
-	}
-	*/
 }
+
 
 void Raster::Clear()
 {
 	for (int j=0;j<height;j++) {
 		for (int i=0;i<width;i++) {
 			colorBuffer->Set(i,j,0xfffdf6e3);
+			depthBuffer->Set(i,j,-10000.0f);
 		}
 	}
 }
 
 
-void Raster::Line(Vec4 & a,Vec4 & b)
+void Raster::Line(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2)
 {
-	float x1=a.data[0];
-	float y1=a.data[1];
+	float x1=v1.data[0];
+	float y1=v1.data[1];
 	
-	float x2=b.data[0];
-	float y2=b.data[1];
+	float x2=v2.data[0];
+	float y2=v2.data[1];
 	
-	Color c(0.5,0.5,0.5);
 	
-	uint32_t color=c.Pixel();
+	
+	uint32_t color=c1.Pixel();
 	
 	// Credits: https://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#C.2B.2B
 	// Bresenham's line algorithm
@@ -268,5 +290,26 @@ void Raster::Line(Vec4 & a,Vec4 & b)
 			y += ystep;
 			error += dx;
 		}
+	}
+}
+
+
+void Raster::Point(Vec4 & v1,Vec4 & n1,Color & c1)
+{
+	int x=v1.data[0];
+	int y=v1.data[1];
+	float z=v1.data[2];
+	
+	if (x<0 or y<0 or x>=colorBuffer->width or y>=colorBuffer->height) {
+		return;
+	}
+	
+	float currentZ=depthBuffer->Get(x,y);
+	
+	if (z>currentZ) {
+		uint32_t color=c1.Pixel();
+	
+		colorBuffer->Set(x,y,color);
+		depthBuffer->Set(x,y,z);
 	}
 }

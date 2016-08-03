@@ -30,16 +30,25 @@
 namespace ic
 {
 	enum class Primitive {
-		Triangles,
-		Lines,
-		Points
+		None,
+		Triangle,
+		Line,
+		Point
 	};
 	
 	class Vbo {
+	private:
+	
+		Vec4 vertex;
+		Vec4 normal;
+		Color color;
+		
+		Primitive type;
+		
+		int size;
 	
 	public:
 	
-		Primitive type;
 	
 		std::vector<Vec4> vertices;
 		std::vector<Color> colors;
@@ -47,6 +56,13 @@ namespace ic
 		
 		Vbo();
 		Vbo(Primitive type);
+		
+		Primitive Type();
+		
+		int Size();
+		
+		void Load(Vec4 vertex,Vec4 normal,Color color);
+		void Load(Vec4 vertex);
 		
 		void Push();
 		void Clear();

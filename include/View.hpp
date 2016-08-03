@@ -21,6 +21,7 @@
 #define _IC_VIEW_
 
 #include "Raster.hpp"
+#include "Vbo.hpp"
 
 #include <gtkmm/drawingarea.h>
 
@@ -50,6 +51,8 @@ namespace ic
 		float pressX,pressY;
 		float phi,theta;
 		float phiDelta,thetaDelta;
+		
+		Vbo axis;
 		
 		void UpdateOrtho();
 	

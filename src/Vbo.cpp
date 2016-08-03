@@ -26,22 +26,58 @@ using namespace std;
 
 Vbo::Vbo()
 {
+	this->type=Primitive::None;
 }
 
 
 Vbo::Vbo(Primitive type)
 {
 	this->type=type;
+	this->size=0;
+}
+
+
+Primitive Vbo::Type()
+{
+	return this->type;
+}
+
+
+int Vbo::Size()
+{
+	return this->size;
+}
+
+
+void Vbo::Load(Vec4 vertex,Vec4 normal,Color color)
+{
+	this->vertex=vertex;
+	this->normal=normal;
+	this->color=color;
+}
+
+
+void Vbo::Load(Vec4 vertex)
+{
+	this->vertex=vertex;
 }
 
 
 void Vbo::Push()
 {
-
+	vertices.push_back(this->vertex);
+	normals.push_back(this->normal);
+	colors.push_back(this->color);
+	
+	this->size++;
 }
 
 
 void Vbo::Clear()
 {
-
+	vertices.clear();
+	normals.clear();
+	colors.clear();
+	
+	this->size=0;
 }
