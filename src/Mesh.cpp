@@ -118,6 +118,8 @@ Mesh::Mesh(string filename)
 			Vertex vx;
 			vx.position.Set(x,y,z,1.0f);
 			vx.normal.Set(nx,ny,nz,0.0f);
+			vx.normal.Normalize();//just in case
+			
 			vx.color.Set(0.3f,0.3f,0.3f);
 			
 			this->vertices.push_back(vx);
@@ -193,7 +195,7 @@ void Mesh::Select(Vec4 point,Vec4 normal,float distance)
 void Mesh::BuildVbo()
 {
 
-	vbo=Vbo(Primitive::Point);
+	vbo=Vbo(Primitive::Triangle);
 	
 	for (Triangle triangle : triangles) {
 		

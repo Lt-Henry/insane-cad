@@ -149,7 +149,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		raster->Draw(mesh.vbo);
 	}
 	
-	raster->Draw(this->axis);
+	//raster->Draw(this->axis);
 	
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	

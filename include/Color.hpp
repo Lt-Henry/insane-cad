@@ -37,6 +37,8 @@ namespace ic
 		
 		uint32_t Pixel();
 	};
+	
+	Color operator * (Color & a,float s);
 }
 
 

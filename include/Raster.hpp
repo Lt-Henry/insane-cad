@@ -54,6 +54,7 @@ namespace ic
 		
 		void Line(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2);
 		void Point(Vec4 & v1,Vec4 & n1,Color & c1);
+		void Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2,Vec4 & v3,Vec4 & n3,Color & c3);
 		
 	};
 }

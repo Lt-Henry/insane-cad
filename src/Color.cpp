@@ -58,3 +58,16 @@ uint32_t Color::Pixel()
 	
 	return px;
 }
+
+
+Color ic::operator * (Color & a,float s)
+{
+	Color ret;
+	
+	ret.data[0]=a.data[0]*s;
+	ret.data[1]=a.data[1]*s;
+	ret.data[2]=a.data[2]*s;
+	ret.data[3]=a.data[3]*s;
+	
+	return ret;
+}

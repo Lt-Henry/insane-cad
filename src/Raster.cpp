@@ -20,6 +20,7 @@
 
 #include "Raster.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <cmath>
 
@@ -163,10 +164,27 @@ void Raster::Draw(Vbo & vbo)
 				Vec4 v2 = vbo.vertices[n+1] ^ matrix;
 				Vec4 v3 = vbo.vertices[n+2] ^ matrix;
 				
+				Vec4 n1 = vbo.normals[n] ^ camera;
+				Vec4 n2 = vbo.normals[n+1] ^ camera;
+				Vec4 n3 = vbo.normals[n+2] ^ camera;
+				
 				v1.Homogeneus();
 				v2.Homogeneus();
 				v3.Homogeneus();
 				
+				
+				Triangle(v1,
+						n1,
+						vbo.colors[n],
+						v2,
+						n2,
+						vbo.colors[n+1],
+						v3,
+						n3,
+						vbo.colors[n+2]);
+
+				
+				/*
 				Line(v1,
 					vbo.normals[n],
 					vbo.colors[n],
@@ -187,7 +205,7 @@ void Raster::Draw(Vbo & vbo)
 					v3,
 					vbo.normals[n+2],
 					vbo.colors[n+2]);
-					
+					*/
 					
 			}
 		
@@ -300,7 +318,7 @@ void Raster::Point(Vec4 & v1,Vec4 & n1,Color & c1)
 	int y=v1.data[1];
 	float z=v1.data[2];
 	
-	if (x<0 or y<0 or x>=colorBuffer->width or y>=colorBuffer->height) {
+	if (x<0 or y<0 or x>=width or y>=height) {
 		return;
 	}
 	
@@ -313,3 +331,78 @@ void Raster::Point(Vec4 & v1,Vec4 & n1,Color & c1)
 		depthBuffer->Set(x,y,z);
 	}
 }
+
+
+float orient(Vec4 & a,Vec4 & b,Vec4 & c)
+{
+	 return (b.data[0]-a.data[0])*(c.data[1]-a.data[1]) - (b.data[1]-a.data[1])*(c.data[0]-a.data[0]);
+}
+
+
+void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2,Vec4 & v3,Vec4 & n3,Color & c3)
+{
+
+	
+	
+	Vec4 light (0,1,1,0);
+	light.Normalize();
+	
+	
+	//credits:
+	//https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/
+	
+	//triangle bound
+	int minX = std::min({v1.data[0],v2.data[0],v3.data[0]});
+	int minY = std::min({v1.data[1],v2.data[1],v3.data[1]});
+	
+	int maxX = std::max({v1.data[0],v2.data[0],v3.data[0]});
+	int maxY = std::max({v1.data[1],v2.data[1],v3.data[1]});
+	
+	//screen clip
+	
+	minX = std::max(minX,0);
+	minY = std::max(minY,0);
+	
+	maxX = std::min(maxX,width-1);
+	maxY = std::min(maxY,height-1);
+	
+	for (int j=minY;j<=maxY;j++) {
+		for (int i=minX;i<=maxX;i++) {
+			
+			//barycentric coords
+			Vec4 c(i,j,0,0);
+			
+			float w0=orient(v2,v3,c);
+			float w1=orient(v3,v1,c);
+			float w2=orient(v1,v2,c);
+			
+			float area=w0+w1+w2;
+			w0/=area;
+			w1/=area;
+			w2/=area;
+			
+			if (w0 >= 0 and w1 >= 0 and w2 >= 0) {
+
+				float z = w0*v1.data[2] + w1*v2.data[2] + w2*v3.data[2];
+
+				float currentZ=depthBuffer->Get(i,j);
+	
+				if (z>currentZ) {
+				
+					float cosAlpha=light*n1;
+					cosAlpha=std::max(0.0f,cosAlpha);
+					cosAlpha=std::min(1.0f,cosAlpha);
+					
+					Color c=c1*cosAlpha;
+					c.data[0]=1.0f;
+					
+					uint32_t color=c.Pixel();
+					
+					colorBuffer->Set(i,j,color);
+					depthBuffer->Set(i,j,z);
+				}
+			}
+		}
+	}
+}
+

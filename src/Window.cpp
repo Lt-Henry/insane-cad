@@ -122,6 +122,9 @@ bool Window::OnPromptKey(GdkEventKey* event)
 			}
 		}
 
-		
+		if (tokens[0]=="reset") {
+			Core::Get()->meshes.clear();
+			view.Update();
+		}
 	}
 }
