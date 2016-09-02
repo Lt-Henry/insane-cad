@@ -42,6 +42,12 @@ namespace ic
 		
 		Buffer<uint32_t>* colorBuffer;
 		Buffer<float>* depthBuffer;
+		
+		int ns_clear;
+		int ns_projection;
+		int ns_transform;
+		int ns_triangle;
+
 	
 		Raster(int width,int height);
 		virtual ~ Raster();

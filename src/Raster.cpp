@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include <chrono>
 
 using namespace ic;
 using namespace std;
@@ -146,11 +147,24 @@ void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
 
 void Raster::Draw(Vbo & vbo)
 {
+
+	ns_projection=0;
+	ns_transform=0;
+	ns_triangle=0;
+	
+	std::chrono::steady_clock::time_point begin,end;
+	
+	begin = std::chrono::steady_clock::now();
+	
 	Mat16 matrix=Mat16::Identity();
 	
 	matrix=matrix ^ camera;
 	matrix=matrix ^ projection;
 	matrix=matrix ^ viewport;
+	
+	end = std::chrono::steady_clock::now();
+	
+	ns_projection=std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
 	
 	switch (vbo.Type()) {
 	
@@ -160,6 +174,10 @@ void Raster::Draw(Vbo & vbo)
 	
 		case Primitive::Triangle:
 			for (int n=0;n<vbo.Size();n+=3) {
+				
+				
+				begin = std::chrono::steady_clock::now();
+				
 				Vec4 v1 = vbo.vertices[n] ^ matrix;
 				Vec4 v2 = vbo.vertices[n+1] ^ matrix;
 				Vec4 v3 = vbo.vertices[n+2] ^ matrix;
@@ -172,6 +190,10 @@ void Raster::Draw(Vbo & vbo)
 				v2.Homogeneus();
 				v3.Homogeneus();
 				
+				end = std::chrono::steady_clock::now();
+				
+				ns_transform+=std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
+				begin = std::chrono::steady_clock::now();
 				
 				Triangle(v1,
 						n1,
@@ -182,7 +204,10 @@ void Raster::Draw(Vbo & vbo)
 						v3,
 						n3,
 						vbo.colors[n+2]);
-
+						
+				end = std::chrono::steady_clock::now();
+				
+				ns_triangle+=std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
 				
 				/*
 				Line(v1,
@@ -251,12 +276,22 @@ void Raster::Draw(Vbo & vbo)
 
 void Raster::Clear()
 {
+	ns_clear=0;
+
+	std::chrono::steady_clock::time_point begin,end;
+				
+	begin = std::chrono::steady_clock::now();
+				
 	for (int j=0;j<height;j++) {
 		for (int i=0;i<width;i++) {
 			colorBuffer->Set(i,j,0xfffdf6e3);
 			depthBuffer->Set(i,j,-10000.0f);
 		}
 	}
+	
+	end = std::chrono::steady_clock::now();
+	
+	ns_clear=std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
 }
 
 

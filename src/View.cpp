@@ -141,7 +141,6 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	//253 246 227 base3
 	//101 123 131 base00
 	
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	
 	raster->Clear();
 	
@@ -150,8 +149,6 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	}
 	
 	//raster->Draw(this->axis);
-	
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	
 	cr->set_source(buffer,0,0);
 	cr->paint();
@@ -166,11 +163,14 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->stroke();
 	*/
 	
-	int ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-	ms=std::max(1,ms);
+	int ns=(raster->ns_clear+raster->ns_projection+raster->ns_transform+raster->ns_triangle);
 	
-	int fps = 1000/ms;
-	cout << "render time " << ms <<" ms ("<<fps<<") fps"<<endl;
+	int fps = 1000/ns;
+	cout <<"* time " << ns/1000000 <<" ms ("<<fps<<") fps"<<endl;
+	cout<<"* clear: "<<raster->ns_clear/1000000<<" ms"<<endl;
+	cout<<"* projection: "<<raster->ns_projection/1000000<<" ms"<<endl;
+	cout<<"* transform: "<<raster->ns_transform/1000000<<" ms"<<endl;
+	cout<<"* triangle: "<<raster->ns_triangle/1000000<<" ms"<<endl;
 }
 
 
