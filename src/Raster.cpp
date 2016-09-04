@@ -39,6 +39,10 @@ Raster::Raster(int width,int height)
 	camera=Mat16::Identity();
 	
 	Resize(width,height);
+	
+		
+	light=Vec4(0,1,1,0);
+	light.Normalize();
 }
 
 
@@ -209,28 +213,6 @@ void Raster::Draw(Vbo & vbo)
 				
 				ns_triangle+=std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
 				
-				/*
-				Line(v1,
-					vbo.normals[n],
-					vbo.colors[n],
-					v2,
-					vbo.normals[n+1],
-					vbo.colors[n+1]);
-					
-				Line(v1,
-					vbo.normals[n],
-					vbo.colors[n],
-					v3,
-					vbo.normals[n+2],
-					vbo.colors[n+2]);
-					
-				Line(v2,
-					vbo.normals[n+1],
-					vbo.colors[n+1],
-					v3,
-					vbo.normals[n+2],
-					vbo.colors[n+2]);
-					*/
 					
 			}
 		
@@ -379,10 +361,6 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color &
 
 	
 	
-	Vec4 light (0,1,1,0);
-	light.Normalize();
-	
-	
 	//credits:
 	//https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/
 	
@@ -426,9 +404,9 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color &
 				
 					float cosAlpha=light*n1;
 					cosAlpha=std::max(0.0f,cosAlpha);
-					cosAlpha=std::min(1.0f,cosAlpha);
+					//cosAlpha=std::min(1.0f,cosAlpha);
 					
-					Color c=c1*cosAlpha;
+					Color c=(c1*(cosAlpha*w0)) + (c2*(cosAlpha*w1)) + (c3*(cosAlpha*w2));
 					c.data[0]=1.0f;
 					
 					uint32_t color=c.Pixel();

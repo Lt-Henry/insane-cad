@@ -39,6 +39,7 @@ namespace ic
 	};
 	
 	Color operator * (Color & a,float s);
+	Color operator + (Color a,Color b);
 }
 
 

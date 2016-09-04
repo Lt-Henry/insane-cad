@@ -165,7 +165,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	
 	int ns=(raster->ns_clear+raster->ns_projection+raster->ns_transform+raster->ns_triangle);
 	
-	int fps = 1000/ns;
+	int fps = 1000000000/ns;
 	cout <<"* time " << ns/1000000 <<" ms ("<<fps<<") fps"<<endl;
 	cout<<"* clear: "<<raster->ns_clear/1000000<<" ms"<<endl;
 	cout<<"* projection: "<<raster->ns_projection/1000000<<" ms"<<endl;

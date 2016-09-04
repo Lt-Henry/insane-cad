@@ -47,6 +47,8 @@ namespace ic
 		int ns_projection;
 		int ns_transform;
 		int ns_triangle;
+		
+		Vec4 light;
 
 	
 		Raster(int width,int height);

@@ -2,6 +2,9 @@
 #main 
 add_executable(insane-cad main.cpp Core.cpp Window.cpp View.cpp Raster.cpp Math.cpp Mesh.cpp Color.cpp Vbo.cpp)
 
+#performance tests
+add_executable(benchmark benchmark.cpp Raster.cpp Math.cpp Color.cpp Vbo.cpp)
+
 #require pkg-config support
 find_package(PkgConfig REQUIRED)
 

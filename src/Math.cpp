@@ -48,10 +48,19 @@ namespace ic
 
 	void Vec4::Homogeneus()
 	{
+		/*
 		data[0]=data[0]/data[3];
 		data[1]=data[1]/data[3];
 		data[2]=data[2]/data[3];
 		data[3]=1.0f;
+		*/
+		
+		float w=1.0f/data[3];
+		
+		data[0]*=w;
+		data[1]*=w;
+		data[2]*=w;
+		data[3]*=w;
 	}
 
 
@@ -276,6 +285,7 @@ namespace ic
 
 	Vec4 operator ^ (Vec4 & v,Mat16 & m)
 	{
+/*	
 		Vec4 ret;
 		
 		ret.data[0]=0.0f;
@@ -289,6 +299,20 @@ namespace ic
 			ret.data[2]= ret.data[2]+m.data[4*2+i]*v.data[i];
 			ret.data[3]= ret.data[3]+m.data[4*3+i]*v.data[i];
 		}
+		return ret;
+*/		
+		Vec4 ret;
+		
+		ret.data[0]=m.data[4*0+0]*v.data[0] + m.data[4*0+1]*v.data[1] + m.data[4*0+2]*v.data[2] + m.data[4*0+3]*v.data[3];
+		
+		ret.data[1]=m.data[4*1+0]*v.data[0] + m.data[4*1+1]*v.data[1] + m.data[4*1+2]*v.data[2] + m.data[4*1+3]*v.data[3];
+		
+		ret.data[2]=m.data[4*2+0]*v.data[0] + m.data[4*2+1]*v.data[1] + m.data[4*2+2]*v.data[2] + m.data[4*2+3]*v.data[3];
+		
+		ret.data[3]=m.data[4*3+0]*v.data[0] + m.data[4*3+1]*v.data[1] + m.data[4*3+2]*v.data[2] + m.data[4*3+3]*v.data[3];
+		
+		
+		
 		return ret;
 	}
 	
