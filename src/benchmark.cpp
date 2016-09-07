@@ -34,12 +34,12 @@ int main(int argc,char* argv[])
 			
 			c=frand();
 			
-			mesh.Load(Vec4(x,y,z,1),Vec4(0,1,0,0),Color(c,c,c));
+			mesh.Load(Vec4(x,y,z,1),Vec4(0,1,0,0),Color(c,c,c),Vec2(0,0));
 			mesh.Push();
 		}
 	}
 	
-	raster.SetOrtho(-1.0,1.0,-1.0,1.0);
+	raster.SetOrtho(-1.0,1.0,-1.0,1.0,0.01,1000);
 	
 	raster.Draw(mesh);
 	

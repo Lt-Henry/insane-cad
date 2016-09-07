@@ -202,26 +202,30 @@ void Mesh::BuildVbo()
 		Vec4 v;
 		Vec4 n;
 		Color c;
+		Vec2 uv;
 		
 		v=vertices[triangle.vertices[0]].position;
 		n=vertices[triangle.vertices[0]].normal;
 		c=vertices[triangle.vertices[0]].color;
+		uv=vertices[triangle.vertices[0]].uv;
 		
-		vbo.Load(v,n,c);
+		vbo.Load(v,n,c,uv);
 		vbo.Push();
 		
 		v=vertices[triangle.vertices[1]].position;
 		n=vertices[triangle.vertices[1]].normal;
 		c=vertices[triangle.vertices[1]].color;
+		uv=vertices[triangle.vertices[1]].uv;
 		
-		vbo.Load(v,n,c);
+		vbo.Load(v,n,c,uv);
 		vbo.Push();
 
 		v=vertices[triangle.vertices[2]].position;
 		n=vertices[triangle.vertices[2]].normal;
 		c=vertices[triangle.vertices[2]].color;
+		uv=vertices[triangle.vertices[2]].uv;
 		
-		vbo.Load(v,n,c);
+		vbo.Load(v,n,c,uv);
 		vbo.Push();
 
 	}

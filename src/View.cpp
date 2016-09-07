@@ -48,22 +48,22 @@ View::View()
 	//build axis vbo
 	axis=Vbo(Primitive::Line);
 	
-	axis.Load(Vec4(0,0,0,1),Vec4(1,0,0),Color(1,0,0));
+	axis.Load(Vec4(0,0,0,1),Vec4(1,0,0),Color(1,0,0),Vec2(0,0));
 	axis.Push();
 	
-	axis.Load(Vec4(10,0,0,1),Vec4(1,0,0),Color(1,0,0));
+	axis.Load(Vec4(10,0,0,1),Vec4(1,0,0),Color(1,0,0),Vec2(0,0));
 	axis.Push();
 	
-	axis.Load(Vec4(0,0,0,1),Vec4(0,1,0),Color(0,1,0));
+	axis.Load(Vec4(0,0,0,1),Vec4(0,1,0),Color(0,1,0),Vec2(0,0));
 	axis.Push();
 	
-	axis.Load(Vec4(0,10,0,1),Vec4(0,1,0),Color(0,1,0));
+	axis.Load(Vec4(0,10,0,1),Vec4(0,1,0),Color(0,1,0),Vec2(0,0));
 	axis.Push();
 	
-	axis.Load(Vec4(0,0,0,1),Vec4(0,0,1),Color(0,0,1));
+	axis.Load(Vec4(0,0,0,1),Vec4(0,0,1),Color(0,0,1),Vec2(0,0));
 	axis.Push();
 	
-	axis.Load(Vec4(0,0,10,1),Vec4(0,0,1),Color(0,0,1));
+	axis.Load(Vec4(0,0,10,1),Vec4(0,0,1),Color(0,0,1),Vec2(0,0));
 	axis.Push();
 
 	UpdateOrtho();
@@ -94,7 +94,8 @@ void View::UpdateOrtho()
 		bottom=-zoom/ratio;
 	}
 	
-	raster->SetOrtho(left,right,top,bottom);
+	//raster->SetOrtho(left,right,top,bottom,0.01,1000.0);
+	raster->SetFrustum(left,right,top,bottom,1.0f,10.0f);
 }
 
 
@@ -171,6 +172,8 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cout<<"* projection: "<<raster->ns_projection/1000000<<" ms"<<endl;
 	cout<<"* transform: "<<raster->ns_transform/1000000<<" ms"<<endl;
 	cout<<"* triangle: "<<raster->ns_triangle/1000000<<" ms"<<endl;
+	cout<<"* t1: "<<raster->ns_t1/1000000<<" ms"<<endl;
+	cout<<"* t2: "<<raster->ns_t2/1000000<<" ms"<<endl;
 }
 
 
@@ -222,7 +225,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 	if (scroll_event->direction==GDK_SCROLL_UP) {
 		zoom*=1.5f;
 		
-		UpdateOrtho();
+		//UpdateOrtho();
 		
 		Update();
 		
@@ -236,7 +239,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 			zoom=0.1f;
 		}
 		
-		UpdateOrtho();
+		//UpdateOrtho();
 		
 		Update();
 		
@@ -282,7 +285,7 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
 			
 			Vec4 forward(px,py,pz,0);
 			
-			raster->SetCamera(Vec4(0,0,0,1),forward,Vec4(0,1,0,0));
+			raster->SetCamera(Vec4(0,0,zoom,1),forward,Vec4(0,1,0,0));
 			Update();
 	}
 	

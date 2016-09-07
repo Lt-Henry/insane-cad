@@ -79,7 +79,7 @@ Color ic::operator + (Color a,Color b)
 	ret.data[0]=a.data[0]+b.data[0];
 	ret.data[1]=a.data[1]+b.data[1];
 	ret.data[2]=a.data[2]+b.data[2];
-	ret.data[3]=a.data[3]+b.data[3];	
+	ret.data[3]=a.data[3]+b.data[3];
 	
-	return ret;	
+	return ret;
 }

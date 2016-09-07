@@ -25,6 +25,16 @@ using namespace std;
 namespace ic
 {
 
+	Vec2::Vec2()
+	{
+	}
+
+	Vec2::Vec2(float x,float y)
+	{
+		data[0]=x;
+		data[1]=y;
+	}
+
 	Vec4::Vec4()
 	{
 	
@@ -285,7 +295,7 @@ namespace ic
 
 	Vec4 operator ^ (Vec4 & v,Mat16 & m)
 	{
-/*	
+	
 		Vec4 ret;
 		
 		ret.data[0]=0.0f;
@@ -300,7 +310,7 @@ namespace ic
 			ret.data[3]= ret.data[3]+m.data[4*3+i]*v.data[i];
 		}
 		return ret;
-*/		
+/*		
 		Vec4 ret;
 		
 		ret.data[0]=m.data[4*0+0]*v.data[0] + m.data[4*0+1]*v.data[1] + m.data[4*0+2]*v.data[2] + m.data[4*0+3]*v.data[3];
@@ -310,7 +320,7 @@ namespace ic
 		ret.data[2]=m.data[4*2+0]*v.data[0] + m.data[4*2+1]*v.data[1] + m.data[4*2+2]*v.data[2] + m.data[4*2+3]*v.data[3];
 		
 		ret.data[3]=m.data[4*3+0]*v.data[0] + m.data[4*3+1]*v.data[1] + m.data[4*3+2]*v.data[2] + m.data[4*3+3]*v.data[3];
-		
+		*/
 		
 		
 		return ret;

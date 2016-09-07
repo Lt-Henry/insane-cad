@@ -22,6 +22,14 @@
 
 namespace ic
 {
+	class Vec2 {
+	public:
+		float data[2];
+		
+		Vec2();
+		Vec2(float x,float y);
+	};
+
 	class Vec4 {
 	public:
 	

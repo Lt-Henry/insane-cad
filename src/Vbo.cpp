@@ -49,17 +49,12 @@ int Vbo::Size()
 }
 
 
-void Vbo::Load(Vec4 vertex,Vec4 normal,Color color)
+void Vbo::Load(Vec4 vertex,Vec4 normal,Color color,Vec2 uv)
 {
 	this->vertex=vertex;
 	this->normal=normal;
 	this->color=color;
-}
-
-
-void Vbo::Load(Vec4 vertex)
-{
-	this->vertex=vertex;
+	this->uv=uv;
 }
 
 
@@ -68,6 +63,7 @@ void Vbo::Push()
 	vertices.push_back(this->vertex);
 	normals.push_back(this->normal);
 	colors.push_back(this->color);
+	uvs.push_back(this->uv);
 	
 	this->size++;
 }
@@ -78,6 +74,7 @@ void Vbo::Clear()
 	vertices.clear();
 	normals.clear();
 	colors.clear();
+	uvs.clear();
 	
 	this->size=0;
 }

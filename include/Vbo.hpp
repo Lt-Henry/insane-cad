@@ -41,6 +41,7 @@ namespace ic
 	
 		Vec4 vertex;
 		Vec4 normal;
+		Vec2 uv;
 		Color color;
 		
 		Primitive type;
@@ -53,6 +54,7 @@ namespace ic
 		std::vector<Vec4> vertices;
 		std::vector<Color> colors;
 		std::vector<Vec4> normals;
+		std::vector<Vec2> uvs;
 		
 		Vbo();
 		Vbo(Primitive type);
@@ -61,8 +63,8 @@ namespace ic
 		
 		int Size();
 		
-		void Load(Vec4 vertex,Vec4 normal,Color color);
-		void Load(Vec4 vertex);
+
+		void Load(Vec4 vertex,Vec4 normal,Color color,Vec2 uv);
 		
 		void Push();
 		void Clear();

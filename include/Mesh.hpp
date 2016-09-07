@@ -34,6 +34,7 @@ namespace ic
 		Vec4 position;
 		Vec4 normal;
 		Color color;
+		Vec2 uv;
 	};
 	
 	

@@ -47,6 +47,8 @@ namespace ic
 		int ns_projection;
 		int ns_transform;
 		int ns_triangle;
+		int ns_t1;
+		int ns_t2;
 		
 		Vec4 light;
 
@@ -55,14 +57,15 @@ namespace ic
 		virtual ~ Raster();
 		
 		void Resize(int width,int height);
-		void SetOrtho(float left,float right,float top,float bottom);
+		void SetOrtho(float left,float right,float top,float bottom,float near,float far);
+		void SetFrustum(float left,float right,float top,float bottom,float near,float far);
 		void SetCamera(Vec4 origin,Vec4 forward,Vec4 up);
 		void Draw(Vbo & vbo);
 		void Clear();
 		
 		void Line(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2);
 		void Point(Vec4 & v1,Vec4 & n1,Color & c1);
-		void Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec4 & v2,Vec4 & n2,Color & c2,Vec4 & v3,Vec4 & n3,Color & c3);
+		void Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 & n2,Color & c2,Vec2 & uv2, Vec4 & v3,Vec4 & n3,Color & c3,Vec2 & uv3);
 		
 	};
 }
