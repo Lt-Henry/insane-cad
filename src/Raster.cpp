@@ -135,13 +135,20 @@ void Raster::SetFrustum(float left,float right,float top,float bottom,float near
 	
 	projection.data[8]=0.0f;
 	projection.data[9]=0.0f;
-	projection.data[10]=(far+near)/(far-near);
-	projection.data[11]=(2.0f*far*near)/(far-near);
+	projection.data[10]=-(far+near)/(far-near);
+	projection.data[11]=-(2.0f*far*near)/(far-near);
 	
 	projection.data[12]=0.0f;
 	projection.data[13]=0.0f;
 	projection.data[14]=-1.0f;
 	projection.data[15]=0.0f;
+	
+	cout<<"left:"<<left<<endl;
+	cout<<"right:"<<right<<endl;
+	cout<<"top:"<<top<<endl;
+	cout<<"bottom:"<<bottom<<endl;
+	cout<<"near:"<<near<<endl;
+	cout<<"far:"<<far<<endl<<endl;
 	
 	for (int n=0;n<4;n++) {
 		for (int m=0;m<16;m+=4) {
@@ -172,7 +179,7 @@ void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
 	camera.data[8]=forward.data[0];
 	camera.data[9]=forward.data[1];
 	camera.data[10]=forward.data[2];
-	camera.data[11]=origin.data[2];
+	camera.data[11]=-origin.data[2];
 	
 	camera.data[12]=0.0f;
 	camera.data[13]=0.0f;
@@ -397,11 +404,7 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 {
 
 	std::chrono::steady_clock::time_point begin,end;
-	/*
-	cout<<"v1 "<<v1.data[0]<<" "<<v1.data[1]<<" "<<v1.data[2]<<endl;
-	cout<<"v2 "<<v2.data[0]<<" "<<v2.data[1]<<" "<<v2.data[2]<<endl;
-	cout<<"v3 "<<v3.data[0]<<" "<<v3.data[1]<<" "<<v3.data[2]<<endl;
-	*/
+	
 	//credits:
 	//https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/
 	
@@ -421,9 +424,20 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 	maxY = std::min(maxY,height-1);
 	
 	//reciprocal
-	v1.data[2]=1.0f/v1.data[2];
-	v2.data[2]=1.0f/v2.data[2];
-	v3.data[2]=1.0f/v3.data[2];
+	
+	float rz1=1.0f/v1.data[2];
+	float rz2=1.0f/v2.data[2];
+	float rz3=1.0f/v3.data[2];
+
+	/*
+	float rz1=v1.data[2];
+	float rz2=v2.data[2];
+	float rz3=v3.data[2];
+	*/
+	cout<<"v1 "<<v1.data[0]<<" "<<v1.data[1]<<" "<<v1.data[2]<<endl;
+	cout<<"v2 "<<v2.data[0]<<" "<<v2.data[1]<<" "<<v2.data[2]<<endl;
+	cout<<"v3 "<<v3.data[0]<<" "<<v3.data[1]<<" "<<v3.data[2]<<endl;
+	
 	
 	float area = orient(v1,v2,v3);
 	
@@ -433,19 +447,26 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 			//barycentric coords
 			Vec4 c(i,j,0,0);
 			
-			float w0=orient(v2,v3,c);
-			float w1=orient(v3,v1,c);
-			float w2=orient(v1,v2,c);
+			float w1=orient(v2,v3,c);
+			float w2=orient(v3,v1,c);
+			float w3=orient(v1,v2,c);
 			
-			//float area=w0+w1+w2;
-			w0/=area;
+			//float area=w1+w2+w3;
+			
 			w1/=area;
 			w2/=area;
+			w3/=area;
 			
-			if (w0 >= 0 and w1 >= 0 and w2 >= 0) {
-
-				float oneOverZ = w0*v1.data[2] + w1*v2.data[2] + w2*v3.data[2];
-				float z=1.0/oneOverZ;
+			
+			if (w1 >= 0 and w2 >= 0 and w3 >= 0) {
+				
+				float oneOverZ = w1*rz1 + w2*rz2 + w3*rz3;
+				float z=1.0f/oneOverZ;
+				/*
+				if (z<0.0) {
+					return;
+				}*/
+				
 				float currentZ=depthBuffer->Get(i,j);
 	
 				if (z<currentZ) {
@@ -455,12 +476,25 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 					cosAlpha=std::min(1.0f,cosAlpha);
 					
 					
-					Color c=(c1*(cosAlpha*w0)) + (c2*(cosAlpha*w1)) + (c3*(cosAlpha*w2));
+					Color c=(c1*(w1*rz1)) + (c2*(w2*rz2)) + (c3*(w3*rz3));
+					c=c*z;
 					c.data[0]=1.0f;
+					/*
+					uv1.data[0]*=v1.data[2];
+					uv1.data[1]*=v1.data[2];
 					
-					float u=(uv1.data[0]*w0*v1.data[2]) + (uv2.data[0]*w1*v2.data[2]) + (uv3.data[0]*w2*v3.data[2]);
-					float v=(uv1.data[1]*w0*v1.data[2]) + (uv2.data[1]*w1*v2.data[2]) + (uv3.data[1]*w2*v3.data[2]);
+					uv2.data[0]*=v2.data[2];
+					uv2.data[1]*=v2.data[2];
+					
+					uv3.data[0]*=v3.data[2];
+					uv3.data[1]*=v3.data[2];
+					*/
+					
+					//float u=uv1.data[0]*w0 + uv2.data[0]*w1 + uv3.data[0]*w2;
 					//float v=uv1.data[1]*w0 + uv2.data[1]*w1 + uv3.data[1]*w2;
+					float u=(uv1.data[0]*w1*rz1) + (uv2.data[0]*w2*rz2) + (uv3.data[0]*w3*rz3);
+					float v=(uv1.data[1]*w1*rz1) + (uv2.data[1]*w2*rz2) + (uv3.data[1]*w3*rz3);
+					
 					u*=z;
 					v*=z;
 					
@@ -468,9 +502,15 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 					//uint32_t color=Color(u,v,0).Pixel();
 					
 					//uint32_t color=0;
-					const int M=10;
+					const int M=8;
 					float p = (fmod(u * M, 1.0) > 0.5) ^ (fmod(v * M, 1.0) < 0.5);
 					uint32_t color=Color(p,p,p).Pixel();
+
+					//Color zc(oneOverZ,oneOverZ,oneOverZ);
+					
+					//Color zc(w1,w2,w3);
+					//Color zc(z,z,z);
+					//uint32_t color=zc.Pixel();
 					
 					colorBuffer->Set(i,j,color);
 					depthBuffer->Set(i,j,z);

@@ -200,6 +200,8 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 	
 	cout<<"world coords: "<<x<<","<<y<<endl;
 	
+	cout<<"z buffer:"<<raster->depthBuffer->Get(mx,my)<<endl;
+	
 	buttonStatus=ButtonStatus::Pressed;
 	this->pressX=mx;
 	this->phiDelta=0.0f;
