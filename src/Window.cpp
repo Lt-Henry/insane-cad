@@ -136,22 +136,22 @@ bool Window::OnPromptKey(GdkEventKey* event)
 			
 			vx.normal=Vec4(0,-1,0,0);
 			
-			vx.position=Vec4(1,0,1,1);
+			vx.position=Vec4(2,0,4,1);
 			vx.color=Color(1,0,0);
 			vx.uv=Vec2(1,1);
 			plane.vertices.push_back(vx);
 			
-			vx.position=Vec4(1,0,-1,1);
+			vx.position=Vec4(2,0,0,1);
 			vx.color=Color(0,1,0);
 			vx.uv=Vec2(1,0);
 			plane.vertices.push_back(vx);
 
-			vx.position=Vec4(-1,0,-1,1);
+			vx.position=Vec4(-2,0,0,1);
 			vx.color=Color(0,0,1);
 			vx.uv=Vec2(0,0);
 			plane.vertices.push_back(vx);
 			
-			vx.position=Vec4(-1,0,1,1);
+			vx.position=Vec4(-2,0,4,1);
 			vx.color=Color(1,1,1);
 			vx.uv=Vec2(0,1);
 			plane.vertices.push_back(vx);

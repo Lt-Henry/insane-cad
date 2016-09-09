@@ -287,7 +287,7 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
 			
 			Vec4 forward(px,py,pz,0);
 			
-			raster->SetCamera(Vec4(0,0,zoom,1),forward,Vec4(0,1,0,0));
+			raster->SetCamera(Vec4(0,0,5.0,1),forward,Vec4(0,1,0,0));
 			Update();
 	}
 	

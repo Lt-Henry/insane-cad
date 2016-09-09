@@ -150,11 +150,15 @@ void Raster::SetFrustum(float left,float right,float top,float bottom,float near
 	cout<<"near:"<<near<<endl;
 	cout<<"far:"<<far<<endl<<endl;
 	
-	for (int n=0;n<4;n++) {
-		for (int m=0;m<16;m+=4) {
-			cout<<projection.data[n+m]<<" ";
+	int l=0;
+	for (int n=0;n<16;n++) {
+		
+		cout<<projection.data[n]<<" ";
+		l++;
+		if (l==4) {
+			l=0;
+			cout<<endl;
 		}
-		cout<<endl;
 	}
 }
 
@@ -169,12 +173,12 @@ void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
 	camera.data[0]=right.data[0];
 	camera.data[1]=right.data[1];
 	camera.data[2]=right.data[2];
-	camera.data[3]=origin.data[0];
+	camera.data[3]=-origin.data[0];
 	
 	camera.data[4]=realUp.data[0];
 	camera.data[5]=realUp.data[1];
 	camera.data[6]=realUp.data[2];
-	camera.data[7]=origin.data[1];
+	camera.data[7]=-origin.data[1];
 	
 	camera.data[8]=forward.data[0];
 	camera.data[9]=forward.data[1];
@@ -230,11 +234,11 @@ void Raster::Draw(Vbo & vbo)
 				Vec4 n1 = vbo.normals[n] ^ camera;
 				Vec4 n2 = vbo.normals[n+1] ^ camera;
 				Vec4 n3 = vbo.normals[n+2] ^ camera;
-				
+				/*
 				v1.Homogeneus();
 				v2.Homogeneus();
 				v3.Homogeneus();
-				
+				*/
 				end = std::chrono::steady_clock::now();
 				
 				ns_transform+=std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count();
@@ -405,8 +409,18 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 
 	std::chrono::steady_clock::time_point begin,end;
 	
+	v1.data[0]/=v1.data[3];
+	v1.data[1]/=v1.data[3];
+	
+	v2.data[0]/=v2.data[3];
+	v2.data[1]/=v2.data[3];
+	
+	v3.data[0]/=v3.data[3];
+	v3.data[1]/=v3.data[3];
+	
 	//credits:
 	//https://fgiesen.wordpress.com/2013/02/08/triangle-rasterization-in-practice/
+	//http://www.scratchapixel.com/code.php?id=26&origin=/lessons/3d-basic-rendering/rasterization-practical-implementation&src=0
 	
 	//triangle bound
 	int minX = std::min({v1.data[0],v2.data[0],v3.data[0]});
@@ -425,18 +439,19 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 	
 	//reciprocal
 	
-	float rz1=1.0f/v1.data[2];
-	float rz2=1.0f/v2.data[2];
-	float rz3=1.0f/v3.data[2];
+	float rz1=1.0f/v1.data[3];
+	float rz2=1.0f/v2.data[3];
+	float rz3=1.0f/v3.data[3];
+	
+	float s1=uv1.data[0]*rz1;
+	float t1=uv1.data[1]*rz1;
+	
+	float s2=uv2.data[0]*rz2;
+	float t2=uv2.data[1]*rz2;
+	
+	float s3=uv3.data[0]*rz3;
+	float t3=uv3.data[1]*rz3;
 
-	/*
-	float rz1=v1.data[2];
-	float rz2=v2.data[2];
-	float rz3=v3.data[2];
-	*/
-	cout<<"v1 "<<v1.data[0]<<" "<<v1.data[1]<<" "<<v1.data[2]<<endl;
-	cout<<"v2 "<<v2.data[0]<<" "<<v2.data[1]<<" "<<v2.data[2]<<endl;
-	cout<<"v3 "<<v3.data[0]<<" "<<v3.data[1]<<" "<<v3.data[2]<<endl;
 	
 	
 	float area = orient(v1,v2,v3);
@@ -462,10 +477,7 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 				
 				float oneOverZ = w1*rz1 + w2*rz2 + w3*rz3;
 				float z=1.0f/oneOverZ;
-				/*
-				if (z<0.0) {
-					return;
-				}*/
+
 				
 				float currentZ=depthBuffer->Get(i,j);
 	
@@ -479,21 +491,9 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 					Color c=(c1*(w1*rz1)) + (c2*(w2*rz2)) + (c3*(w3*rz3));
 					c=c*z;
 					c.data[0]=1.0f;
-					/*
-					uv1.data[0]*=v1.data[2];
-					uv1.data[1]*=v1.data[2];
 					
-					uv2.data[0]*=v2.data[2];
-					uv2.data[1]*=v2.data[2];
-					
-					uv3.data[0]*=v3.data[2];
-					uv3.data[1]*=v3.data[2];
-					*/
-					
-					//float u=uv1.data[0]*w0 + uv2.data[0]*w1 + uv3.data[0]*w2;
-					//float v=uv1.data[1]*w0 + uv2.data[1]*w1 + uv3.data[1]*w2;
-					float u=(uv1.data[0]*w1*rz1) + (uv2.data[0]*w2*rz2) + (uv3.data[0]*w3*rz3);
-					float v=(uv1.data[1]*w1*rz1) + (uv2.data[1]*w2*rz2) + (uv3.data[1]*w3*rz3);
+					float u=s1*w1 + s2*w2 + s3*w3;
+					float v=t1*w1 + t2*w2 + t3*w3;
 					
 					u*=z;
 					v*=z;
@@ -505,6 +505,13 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 					const int M=8;
 					float p = (fmod(u * M, 1.0) > 0.5) ^ (fmod(v * M, 1.0) < 0.5);
 					uint32_t color=Color(p,p,p).Pixel();
+					
+					/*
+					uint32_t color=Color(1,0,0).Pixel();
+					if (u>0.5 xor v>0.5) {
+						color=Color(0,1,0).Pixel();
+					}
+					*/
 
 					//Color zc(oneOverZ,oneOverZ,oneOverZ);
 					
