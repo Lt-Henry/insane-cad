@@ -281,6 +281,8 @@ namespace ic
 		ret.data[13]=0.0f;
 		ret.data[14]=0.0f;
 		ret.data[15]=1.0f;
+		
+		return ret;
 	}
 	
 	Mat16 Mat16::Frustum(float left,float right,float top,float bottom,float near,float far)
@@ -307,6 +309,49 @@ namespace ic
 		ret.data[13]=0.0f;
 		ret.data[14]=-1.0f;
 		ret.data[15]=0.0f;
+		
+		return ret;
+	}
+
+
+	Mat16 Mat16::Camera(Vec4 & eye, Vec4 & center, Vec4 & up)
+	{
+	
+		/*
+			TODO: Fix the matrix
+		*/
+		Mat16 ret;
+		
+		Vec4 forward = center - eye;
+		forward.Normalize();
+		
+		Vec4 side = forward ^ up;
+		side.Normalize();
+		
+		Vec4 realUp = side ^ forward;
+		
+	
+		ret.data[0]=right.data[0];
+		ret.data[1]=right.data[1];
+		ret.data[2]=right.data[2];
+		ret.data[3]=0;
+	
+		ret.data[4]=realUp.data[0];
+		ret.data[5]=realUp.data[1];
+		ret.data[6]=realUp.data[2];
+		ret.data[7]=0;
+	
+		ret.data[8]=-forward.data[0];
+		ret.data[9]=-forward.data[1];
+		ret.data[10]=-forward.data[2];
+		ret.data[11]=0;
+	
+		ret.data[12]=0.0f;
+		ret.data[13]=0.0f;
+		ret.data[14]=0.0f;
+		ret.data[15]=1.0f;
+		
+		return ret;
 	}
 
 

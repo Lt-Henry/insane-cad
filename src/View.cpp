@@ -108,7 +108,6 @@ void View::Update()
 bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
-	
 
 	Gtk::Allocation allocation = get_allocation();
 	const int w = allocation.get_width();
@@ -200,7 +199,6 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 	
 	cout<<"world coords: "<<x<<","<<y<<endl;
 	
-	cout<<"z buffer:"<<raster->depthBuffer->Get(mx,my)<<endl;
 	
 	buttonStatus=ButtonStatus::Pressed;
 	this->pressX=mx;
@@ -225,7 +223,7 @@ bool View::on_button_release_event(GdkEventButton * button_event)
 bool View::on_scroll_event(GdkEventScroll* scroll_event)
 {
 	if (scroll_event->direction==GDK_SCROLL_UP) {
-		zoom*=1.5f;
+		zoom+=1.0f;
 		
 		//UpdateOrtho();
 		
@@ -235,10 +233,10 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
 	}
 	
 	if (scroll_event->direction==GDK_SCROLL_DOWN) {
-		zoom*=0.5f;
+		zoom-=1.0f;
 		
-		if (zoom<0.1) {
-			zoom=0.1f;
+		if (zoom<1.0f) {
+			zoom=1.0f;
 		}
 		
 		//UpdateOrtho();
@@ -285,9 +283,6 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
 			float py=cos(this->thetaDelta);
 			
 			
-			Vec4 forward(px,py,pz,0);
-			
-			raster->SetCamera(Vec4(0,0,5.0,1),forward,Vec4(0,1,0,0));
 			Update();
 	}
 	

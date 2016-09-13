@@ -59,6 +59,7 @@ namespace ic
 		static Mat16 Scale(float x,float y,float z);
 		static Mat16 Ortho(float left,float right,float top,float bottom,float near,float far);
 		static Mat16 Frustum(float left,float right,float top,float bottom,float near,float far);
+		static Mat16 Camera(Vec4 & eye,Vec4 & center, Vec4 & up);
 	};
 	
 	Vec4 operator - (Vec4 & a, Vec4 & b);

@@ -36,7 +36,7 @@ Raster::Raster(int width,int height)
 	depthBuffer=nullptr;
 	
 	projection=Mat16::Identity();
-	camera=Mat16::Identity();
+	model=Mat16::Identity();
 	
 	Resize(width,height);
 	
@@ -91,104 +91,25 @@ void Raster::Resize(int width,int height)
 	viewport.data[14]=0.0f;
 	viewport.data[15]=1.0f;
 	
-
-
-}
-
-void Raster::SetOrtho(float left,float right,float top,float bottom,float near,float far)
-{
-	// orthographic projection matrix
-	projection.data[0]=2.0f/(right-left);
-	projection.data[1]=0.0f;
-	projection.data[2]=0.0f;
-	projection.data[3]=-(right+left)/(right-left);
-
-	projection.data[4]=0.0f;
-	projection.data[5]=2.0f/(top-bottom);
-	projection.data[6]=0.0f;
-	projection.data[7]=-(top+bottom)/(top-bottom);
-	
-	projection.data[8]=0.0f;
-	projection.data[9]=0.0f;
-	projection.data[10]=-2.0f/(far-near);
-	projection.data[11]=-(far+near)/(far-near);
-	
-	projection.data[12]=0.0f;
-	projection.data[13]=0.0f;
-	projection.data[14]=0.0f;
-	projection.data[15]=1.0f;
 }
 
 
-void Raster::SetFrustum(float left,float right,float top,float bottom,float near,float far)
+void Raster::SetMatrix(MatrixType type, Mat16 & matrix)
 {
-	//perspective projection matrix
-	projection.data[0]=(2.0f*near)/(right-left);
-	projection.data[1]=0.0f;
-	projection.data[2]=(right+left)/(right-left);
-	projection.data[3]=0.0f;
-
-	projection.data[4]=0.0f;
-	projection.data[5]=(2.0f*near)/(top-bottom);
-	projection.data[6]=(top+bottom)/(top-bottom);
-	projection.data[7]=0.0f;
+	switch (type) {
 	
-	projection.data[8]=0.0f;
-	projection.data[9]=0.0f;
-	projection.data[10]=-(far+near)/(far-near);
-	projection.data[11]=-(2.0f*far*near)/(far-near);
-	
-	projection.data[12]=0.0f;
-	projection.data[13]=0.0f;
-	projection.data[14]=-1.0f;
-	projection.data[15]=0.0f;
-	
-	cout<<"left:"<<left<<endl;
-	cout<<"right:"<<right<<endl;
-	cout<<"top:"<<top<<endl;
-	cout<<"bottom:"<<bottom<<endl;
-	cout<<"near:"<<near<<endl;
-	cout<<"far:"<<far<<endl<<endl;
-	
-	int l=0;
-	for (int n=0;n<16;n++) {
+		case matrixType::Viewport:
+			this->viewport=matrix;
+		break;
 		
-		cout<<projection.data[n]<<" ";
-		l++;
-		if (l==4) {
-			l=0;
-			cout<<endl;
-		}
+		case MatrixType::Projection:
+			this->projection=matrix;
+		break;
+		
+		case MatrixType::Model:
+			this->model=model;
+		break;
 	}
-}
-
-
-void Raster::SetCamera(Vec4 origin,Vec4 forward,Vec4 up)
-{
-	forward.Normalize();
-	Vec4 right = forward ^ up;
-	right.Normalize();
-	Vec4 realUp = forward ^ right;
-	
-	camera.data[0]=right.data[0];
-	camera.data[1]=right.data[1];
-	camera.data[2]=right.data[2];
-	camera.data[3]=-origin.data[0];
-	
-	camera.data[4]=realUp.data[0];
-	camera.data[5]=realUp.data[1];
-	camera.data[6]=realUp.data[2];
-	camera.data[7]=-origin.data[1];
-	
-	camera.data[8]=forward.data[0];
-	camera.data[9]=forward.data[1];
-	camera.data[10]=forward.data[2];
-	camera.data[11]=-origin.data[2];
-	
-	camera.data[12]=0.0f;
-	camera.data[13]=0.0f;
-	camera.data[14]=0.0f;
-	camera.data[15]=1.0f;
 }
 
 
@@ -207,7 +128,7 @@ void Raster::Draw(Vbo & vbo)
 	
 	Mat16 matrix=Mat16::Identity();
 	
-	matrix=matrix ^ camera;
+	matrix=matrix ^ model;
 	matrix=matrix ^ projection;
 	matrix=matrix ^ viewport;
 	

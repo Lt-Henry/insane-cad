@@ -29,19 +29,28 @@
 
 namespace ic
 {
+
+	enum class MatrixType {
+		Viewport,
+		Projection,
+		Model
+	};
+
 	class Raster {
-	public:
+	private:
 	
+		Buffer<uint32_t>* colorBuffer;
+		Buffer<float>* depthBuffer;
+
 		Mat16 viewport;
 		Mat16 projection;
-		Mat16 camera;
+		Mat16 model;
+
+	public:
+	
 	
 		int width;
 		int height;
-		
-		
-		Buffer<uint32_t>* colorBuffer;
-		Buffer<float>* depthBuffer;
 		
 		int ns_clear;
 		int ns_projection;
@@ -54,12 +63,12 @@ namespace ic
 
 	
 		Raster(int width,int height);
-		virtual ~ Raster();
+		virtual ~Raster();
 		
 		void Resize(int width,int height);
-		void SetOrtho(float left,float right,float top,float bottom,float near,float far);
-		void SetFrustum(float left,float right,float top,float bottom,float near,float far);
-		void SetCamera(Vec4 origin,Vec4 forward,Vec4 up);
+		
+		void SetMatrix(MatrixType type, Mat16 & matrix);
+		
 		void Draw(Vbo & vbo);
 		void Clear();
 		
