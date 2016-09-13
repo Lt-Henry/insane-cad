@@ -57,6 +57,8 @@ namespace ic
 		static Mat16 RotationZ(float phi);
 		static Mat16 Translation(float x,float y,float z);
 		static Mat16 Scale(float x,float y,float z);
+		static Mat16 Ortho(float left,float right,float top,float bottom,float near,float far);
+		static Mat16 Frustum(float left,float right,float top,float bottom,float near,float far);
 	};
 	
 	Vec4 operator - (Vec4 & a, Vec4 & b);

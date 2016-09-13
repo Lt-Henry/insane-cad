@@ -255,6 +255,59 @@ namespace ic
 		
 		return ret;
 	}
+	
+	
+	Mat16 Mat16::Ortho(float left,float right,float top,float bottom,float near,float far)
+	{
+		Mat16 ret;
+		
+		// orthographic projection matrix
+		ret.data[0]=2.0f/(right-left);
+		ret.data[1]=0.0f;
+		ret.data[2]=0.0f;
+		ret.data[3]=-(right+left)/(right-left);
+
+		ret.data[4]=0.0f;
+		ret.data[5]=2.0f/(top-bottom);
+		ret.data[6]=0.0f;
+		ret.data[7]=-(top+bottom)/(top-bottom);
+	
+		ret.data[8]=0.0f;
+		ret.data[9]=0.0f;
+		ret.data[10]=-2.0f/(far-near);
+		ret.data[11]=-(far+near)/(far-near);
+	
+		ret.data[12]=0.0f;
+		ret.data[13]=0.0f;
+		ret.data[14]=0.0f;
+		ret.data[15]=1.0f;
+	}
+	
+	Mat16 Mat16::Frustum(float left,float right,float top,float bottom,float near,float far)
+	{
+		Mat16 ret;
+	
+		//perspective projection matrix
+		ret.data[0]=(2.0f*near)/(right-left);
+		ret.data[1]=0.0f;
+		ret.data[2]=(right+left)/(right-left);
+		ret.data[3]=0.0f;
+
+		ret.data[4]=0.0f;
+		ret.data[5]=(2.0f*near)/(top-bottom);
+		ret.data[6]=(top+bottom)/(top-bottom);
+		ret.data[7]=0.0f;
+	
+		ret.data[8]=0.0f;
+		ret.data[9]=0.0f;
+		ret.data[10]=-(far+near)/(far-near);
+		ret.data[11]=-(2.0f*far*near)/(far-near);
+	
+		ret.data[12]=0.0f;
+		ret.data[13]=0.0f;
+		ret.data[14]=-1.0f;
+		ret.data[15]=0.0f;
+	}
 
 
 	Vec4 operator - (Vec4 & a, Vec4 & b)
