@@ -325,10 +325,10 @@ namespace ic
 		Vec4 forward = center - eye;
 		forward.Normalize();
 		
-		Vec4 side = forward ^ up;
-		side.Normalize();
+		Vec4 right = forward ^ up;
+		right.Normalize();
 		
-		Vec4 realUp = side ^ forward;
+		Vec4 realUp = right ^ forward;
 		
 	
 		ret.data[0]=right.data[0];

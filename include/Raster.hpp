@@ -39,8 +39,7 @@ namespace ic
 	class Raster {
 	private:
 	
-		Buffer<uint32_t>* colorBuffer;
-		Buffer<float>* depthBuffer;
+		
 
 		Mat16 viewport;
 		Mat16 projection;
@@ -48,6 +47,8 @@ namespace ic
 
 	public:
 	
+		Buffer<uint32_t>* colorBuffer;
+		Buffer<float>* depthBuffer;
 	
 		int width;
 		int height;

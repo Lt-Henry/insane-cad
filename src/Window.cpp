@@ -99,15 +99,6 @@ bool Window::OnPromptKey(GdkEventKey* event)
 		}
 		
 		
-		if (tokens[0]=="top") {
-			view.raster->SetCamera(Vec4(0,0,0,1),Vec4(0,1,0,0),Vec4(1,0,0,0));
-			view.Update();
-		}
-		if (tokens[0]=="front") {
-			view.raster->SetCamera(Vec4(0,0,0,1),Vec4(0,0,1,0),Vec4(0,1,0,0));
-			view.Update();
-		}
-		
 		if (tokens[0]=="load") {
 			if (tokens.size() > 1 ) {
 				Print("Loading: "+tokens[1]);

@@ -49,8 +49,7 @@ namespace ic
 		ButtonStatus buttonStatus;
 		
 		float pressX,pressY;
-		float phi,theta;
-		float phiDelta,thetaDelta;
+		float rX,rY,rZ;
 		
 		Vbo axis;
 		

@@ -41,7 +41,7 @@ Raster::Raster(int width,int height)
 	Resize(width,height);
 	
 		
-	light=Vec4(0,1,-1,0);
+	light=Vec4(1,1,-1,0);
 	light.Normalize();
 }
 
@@ -98,7 +98,7 @@ void Raster::SetMatrix(MatrixType type, Mat16 & matrix)
 {
 	switch (type) {
 	
-		case matrixType::Viewport:
+		case MatrixType::Viewport:
 			this->viewport=matrix;
 		break;
 		
@@ -107,7 +107,7 @@ void Raster::SetMatrix(MatrixType type, Mat16 & matrix)
 		break;
 		
 		case MatrixType::Model:
-			this->model=model;
+			this->model=matrix;
 		break;
 	}
 }
@@ -152,9 +152,9 @@ void Raster::Draw(Vbo & vbo)
 				Vec4 v2 = vbo.vertices[n+1] ^ matrix;
 				Vec4 v3 = vbo.vertices[n+2] ^ matrix;
 				
-				Vec4 n1 = vbo.normals[n] ^ camera;
-				Vec4 n2 = vbo.normals[n+1] ^ camera;
-				Vec4 n3 = vbo.normals[n+2] ^ camera;
+				Vec4 n1 = vbo.normals[n] ^ model;
+				Vec4 n2 = vbo.normals[n+1] ^ model;
+				Vec4 n3 = vbo.normals[n+2] ^ model;
 				/*
 				v1.Homogeneus();
 				v2.Homogeneus();
@@ -409,7 +409,7 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 					cosAlpha=std::min(1.0f,cosAlpha);
 					
 					
-					Color c=(c1*(w1*rz1)) + (c2*(w2*rz2)) + (c3*(w3*rz3));
+					Color c=(c1*(w1*rz1*cosAlpha)) + (c2*(w2*rz2*cosAlpha)) + (c3*(w3*rz3*cosAlpha));
 					c=c*z;
 					c.data[0]=1.0f;
 					
@@ -419,13 +419,13 @@ void Raster::Triangle(Vec4 & v1,Vec4 & n1,Color & c1,Vec2 & uv1,Vec4 & v2,Vec4 &
 					u*=z;
 					v*=z;
 					
-					//uint32_t color=c.Pixel();
+					uint32_t color=c.Pixel();
 					//uint32_t color=Color(u,v,0).Pixel();
 					
 					//uint32_t color=0;
 					const int M=8;
 					float p = (fmod(u * M, 1.0) > 0.5) ^ (fmod(v * M, 1.0) < 0.5);
-					uint32_t color=Color(p,p,p).Pixel();
+					//uint32_t color=Color(p,p,p).Pixel();
 					
 					/*
 					uint32_t color=Color(1,0,0).Pixel();

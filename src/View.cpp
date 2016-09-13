@@ -38,8 +38,10 @@ View::View()
 	width=0;
 	height=0;
 	
-	zoom=1.0f;
-	phi=0.0f;
+	zoom=10.0f;
+	rX=0.0f;
+	rY=0.0f;
+	rZ=0.0f;
 	
 	buttonStatus=ButtonStatus::Released;
 	
@@ -76,26 +78,30 @@ View::~View()
 	delete raster;
 }
 
+
 void View::UpdateOrtho()
 {
 	//set raster projection
 	float ratio = width/(float)height;
 
 	if (ratio>=1.0f) {
-		left=-zoom*ratio;
-		right=zoom*ratio;
-		top=zoom;
-		bottom=-zoom;
+		left=-1.0f*ratio;
+		right=1.0f*ratio;
+		top=1.0f;
+		bottom=-1.0f;
 	}
 	else {
-		left=-zoom;
-		right=zoom;
-		top=zoom/ratio;
-		bottom=-zoom/ratio;
+		left=-1.0f;
+		right=1.0f;
+		top=1.0f/ratio;
+		bottom=-1.0f/ratio;
 	}
 	
 	//raster->SetOrtho(left,right,top,bottom,0.01,1000.0);
-	raster->SetFrustum(left,right,top,bottom,1.0f,10.0f);
+	
+	Mat16 projection = Mat16::Frustum(left,right,top,bottom,1.0f,1000.0f);
+	
+	raster->SetMatrix(MatrixType::Projection,projection);
 }
 
 
@@ -127,6 +133,17 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		UpdateOrtho();
 	
 	}
+	
+	Mat16 modelMatrix = Mat16::Identity();
+	Mat16 tM = Mat16::Translation(0,0,-zoom);
+	Mat16 rxM = Mat16::RotationX(rX);
+	Mat16 ryM = Mat16::RotationY(rY);
+	
+	modelMatrix = modelMatrix ^ ryM;
+	modelMatrix = modelMatrix ^ rxM;
+	modelMatrix = modelMatrix ^ tM;
+	
+	raster->SetMatrix(MatrixType::Model,modelMatrix);
 	
 	Cairo::RefPtr<Cairo::ImageSurface> buffer;
 	
@@ -188,37 +205,25 @@ bool View::on_button_press_event(GdkEventButton * button_event)
 	cout<<"press"<<endl;
 	cout<<"mouse coords: "<<mx<<","<<my<<endl;
 	
-	float x=mx/(float)w;
-	float y=my/(float)h;
-	
-	float dw=(right-left);
-	float dh=(top-bottom);
-	
-	x=x*dw - (dw/2.0f);
-	y=y*dh - (dh/2.0f);
-	
-	cout<<"world coords: "<<x<<","<<y<<endl;
 	
 	
 	buttonStatus=ButtonStatus::Pressed;
 	this->pressX=mx;
-	this->phiDelta=0.0f;
 	this->pressY=my;
-	this->thetaDelta=0.0f;
 	
 	return true;
 }
+
 
 bool View::on_button_release_event(GdkEventButton * button_event)
 {
 	cout<<"release"<<endl;
 	buttonStatus=ButtonStatus::Released;
 	
-	this->phi=this->phiDelta;
-	this->theta=this->thetaDelta;
 	
 	return true;
 }
+
 
 bool View::on_scroll_event(GdkEventScroll* scroll_event)
 {
@@ -263,25 +268,8 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
 			float deltax=mx-this->pressX;
 			float deltay=this->pressY-my;
 			
-			
-			
-			this->phiDelta=this->phi-(deltax/(float)this->width);
-			this->thetaDelta=this->theta-(deltay/(float)this->height);
-			
-			if (this->thetaDelta > (M_PI-0.05f)) {
-				this->thetaDelta=M_PI-0.05f;
-			}
-			
-			if (this->thetaDelta < 0.05f) {
-				this->thetaDelta=0.05f;
-			}
-
-			
-			
-			float px=sin(this->thetaDelta)*cos(this->phiDelta);
-			float pz=sin(this->thetaDelta)*sin(this->phiDelta);
-			float py=cos(this->thetaDelta);
-			
+			this->rX+=deltax*0.01f;
+			this->rY+=deltay*0.01f;
 			
 			Update();
 	}
