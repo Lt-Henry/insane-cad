@@ -41,7 +41,7 @@ Raster::Raster(int width,int height)
 	Resize(width,height);
 	
 		
-	light=Vec4(1,1,-1,0);
+	light=Vec4(1,1,1,0);
 	light.Normalize();
 }
 
@@ -94,9 +94,9 @@ void Raster::Resize(int width,int height)
 }
 
 
-void Raster::SetMatrix(MatrixType type, Mat16 & matrix)
+void Raster::SetMatrix(MatrixType what, Mat16 & matrix)
 {
-	switch (type) {
+	switch (what) {
 	
 		case MatrixType::Viewport:
 			this->viewport=matrix;
@@ -108,6 +108,25 @@ void Raster::SetMatrix(MatrixType type, Mat16 & matrix)
 		
 		case MatrixType::Model:
 			this->model=matrix;
+		break;
+	}
+}
+
+
+Mat16 Raster::GetMatrix(MatrixType what)
+{
+	switch (what) {
+	
+		case MatrixType::Viewport:
+			return this->viewport;
+		break;
+		
+		case MatrixType::Projection:
+			return this->projection;
+		break;
+		
+		case MatrixType::Model:
+			return this->model;
 		break;
 	}
 }

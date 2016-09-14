@@ -50,6 +50,7 @@ namespace ic
 		
 		float pressX,pressY;
 		float rX,rY,rZ;
+		Mat16 matT;
 		
 		Vbo axis;
 		

@@ -68,7 +68,8 @@ namespace ic
 		
 		void Resize(int width,int height);
 		
-		void SetMatrix(MatrixType type, Mat16 & matrix);
+		void SetMatrix(MatrixType what, Mat16 & matrix);
+		Mat16 GetMatrix(MatrixType what);
 		
 		void Draw(Vbo & vbo);
 		void Clear();

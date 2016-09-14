@@ -43,6 +43,8 @@ View::View()
 	rY=0.0f;
 	rZ=0.0f;
 	
+	matT=Mat16::Identity();
+	
 	buttonStatus=ButtonStatus::Released;
 	
 	raster=new Raster(32,32);
@@ -136,14 +138,24 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	
 	Mat16 modelMatrix = Mat16::Identity();
 	Mat16 tM = Mat16::Translation(0,0,-zoom);
-	Mat16 rxM = Mat16::RotationX(rX);
-	Mat16 ryM = Mat16::RotationY(rY);
+	
+	//TODO: fix rotation matrices
+	Mat16 ryM = Mat16::RotationX(rY);
+	Mat16 rxM = Mat16::RotationY(rX);
 	
 	modelMatrix = modelMatrix ^ ryM;
 	modelMatrix = modelMatrix ^ rxM;
-	modelMatrix = modelMatrix ^ tM;
+	
+	matT = matT ^ modelMatrix;
+	
+	//modelMatrix = modelMatrix ^ actualMatrix;
+	modelMatrix = matT ^ tM;
+	
 	
 	raster->SetMatrix(MatrixType::Model,modelMatrix);
+	
+	this->rX=0.0f;
+	this->rY=0.0f;
 	
 	Cairo::RefPtr<Cairo::ImageSurface> buffer;
 	
@@ -268,8 +280,11 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
 			float deltax=mx-this->pressX;
 			float deltay=this->pressY-my;
 			
-			this->rX+=deltax*0.01f;
-			this->rY+=deltay*0.01f;
+			this->rX+=(deltax/8.0f);
+			this->rY-=(deltay/8.0f);
+			
+			this->pressX=mx;
+			this->pressY=my;
 			
 			Update();
 	}
