@@ -35,40 +35,20 @@ View::View()
 	set_halign(Gtk::ALIGN_FILL);
 	set_valign(Gtk::ALIGN_FILL);
 	
-	width=0;
-	height=0;
+	width=32;
+	height=32;
+	
+	buffer=new uint32_t[width*height];
 	
 	zoom=10.0f;
 	rX=0.0f;
 	rY=0.0f;
 	rZ=0.0f;
 	
-	matT=Mat16::Identity();
+
 	
 	buttonStatus=ButtonStatus::Released;
 	
-	raster=new Raster(32,32);
-	
-	//build axis vbo
-	axis=Vbo(Primitive::Line);
-	
-	axis.Load(Vec4(0,0,0,1),Vec4(1,0,0),Color(1,0,0),Vec2(0,0));
-	axis.Push();
-	
-	axis.Load(Vec4(10,0,0,1),Vec4(1,0,0),Color(1,0,0),Vec2(0,0));
-	axis.Push();
-	
-	axis.Load(Vec4(0,0,0,1),Vec4(0,1,0),Color(0,1,0),Vec2(0,0));
-	axis.Push();
-	
-	axis.Load(Vec4(0,10,0,1),Vec4(0,1,0),Color(0,1,0),Vec2(0,0));
-	axis.Push();
-	
-	axis.Load(Vec4(0,0,0,1),Vec4(0,0,1),Color(0,0,1),Vec2(0,0));
-	axis.Push();
-	
-	axis.Load(Vec4(0,0,10,1),Vec4(0,0,1),Color(0,0,1),Vec2(0,0));
-	axis.Push();
 
 	UpdateOrtho();
 	
@@ -77,7 +57,7 @@ View::View()
 
 View::~View()
 {
-	delete raster;
+	delete buffer;
 }
 
 
@@ -101,9 +81,9 @@ void View::UpdateOrtho()
 	
 	//raster->SetOrtho(left,right,top,bottom,0.01,1000.0);
 	
-	Mat16 projection = Mat16::Frustum(left,right,top,bottom,1.0f,1000.0f);
+	//Mat16 projection = Mat16::Frustum(left,right,top,bottom,1.0f,1000.0f);
 	
-	raster->SetMatrix(MatrixType::Projection,projection);
+	
 }
 
 
@@ -129,13 +109,18 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		width=w;
 		height=h;
 		
+		
 		//resize raster viewport
-		raster->Resize(width,height);
+		
+		delete buffer;
+		
+		buffer=new uint32_t[width*height];
 
 		UpdateOrtho();
 	
 	}
 	
+	/*
 	Mat16 modelMatrix = Mat16::Identity();
 	Mat16 tM = Mat16::Translation(0,0,-zoom);
 	
@@ -150,38 +135,33 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	
 	//modelMatrix = modelMatrix ^ actualMatrix;
 	modelMatrix = matT ^ tM;
+	*/
 	
-	
-	raster->SetMatrix(MatrixType::Model,modelMatrix);
 	
 	this->rX=0.0f;
 	this->rY=0.0f;
 	
-	Cairo::RefPtr<Cairo::ImageSurface> buffer;
+	Cairo::RefPtr<Cairo::ImageSurface> imageBuffer;
 	
-	buffer=Cairo::ImageSurface::create(
-		(unsigned char*)(raster->colorBuffer->data),
+	imageBuffer=Cairo::ImageSurface::create(
+		(unsigned char*)(this->buffer),
 		Cairo::Format::FORMAT_ARGB32,
 		width,
 		height,
 		width*4
 		);
-
+	
 	//253 246 227 base3
 	//101 123 131 base00
 	
 	
-	raster->Clear();
-	
-	for (Mesh & mesh : Core::Get()->meshes) {
-		raster->Draw(mesh.vbo);
-	}
+
 	
 	//raster->Draw(this->axis);
 	
-	cr->set_source(buffer,0,0);
+	cr->set_source(imageBuffer,0,0);
 	cr->paint();
-	/*
+	
 	cr->set_source_rgb(0.39, 0.48, 0.51);
 	cr->move_to(width/2.0,0);
 	cr->line_to(width/2.0,height);
@@ -190,8 +170,8 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cr->move_to(0,height/2.0);
 	cr->line_to(width,height/2.0);
 	cr->stroke();
-	*/
 	
+	/*
 	int ns=(raster->ns_clear+raster->ns_projection+raster->ns_transform+raster->ns_triangle);
 	
 	int fps = 1000000000/ns;
@@ -202,6 +182,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	cout<<"* triangle: "<<raster->ns_triangle/1000000<<" ms"<<endl;
 	cout<<"* t1: "<<raster->ns_t1/1000000<<" ms"<<endl;
 	cout<<"* t2: "<<raster->ns_t2/1000000<<" ms"<<endl;
+	*/
 }
 
 

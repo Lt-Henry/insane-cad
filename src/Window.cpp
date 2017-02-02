@@ -102,71 +102,15 @@ bool Window::OnPromptKey(GdkEventKey* event)
 		if (tokens[0]=="load") {
 			if (tokens.size() > 1 ) {
 				Print("Loading: "+tokens[1]);
-				Mesh mesh(tokens[1]);
-				//mesh.Select(Vec4(23,0,0,1),10.0f);
-				mesh.Select(Vec4(23,0,0,1),Vec4(1,0,0),5.0f);
-				
-				mesh.BuildVbo();
-				Core::Get()->meshes.push_back(mesh);
+
 				Print("done");
 				view.Update();
 			}
 		}
 
 		if (tokens[0]=="reset") {
-			Core::Get()->meshes.clear();
 			view.Update();
 		}
 		
-		if (tokens[0]=="plane") {
-			Mesh plane;
-			
-			
-			
-			Vertex vx;
-			
-			vx.normal=Vec4(0,-1,0,0);
-			
-			vx.position=Vec4(2,0,4,1);
-			vx.color=Color(1,0,0);
-			vx.uv=Vec2(1,1);
-			plane.vertices.push_back(vx);
-			
-			vx.position=Vec4(2,0,0,1);
-			vx.color=Color(0,1,0);
-			vx.uv=Vec2(1,0);
-			plane.vertices.push_back(vx);
-
-			vx.position=Vec4(-2,0,0,1);
-			vx.color=Color(0,0,1);
-			vx.uv=Vec2(0,0);
-			plane.vertices.push_back(vx);
-			
-			vx.position=Vec4(-2,0,4,1);
-			vx.color=Color(1,1,1);
-			vx.uv=Vec2(0,1);
-			plane.vertices.push_back(vx);
-
-			Triangle t1,t2;
-			
-			t1.vertices[0]=0;
-			t1.vertices[1]=1;
-			t1.vertices[2]=2;
-			
-			t2.vertices[0]=2;
-			t2.vertices[1]=3;
-			t2.vertices[2]=0;
-
-
-			plane.triangles.push_back(t1);
-			plane.triangles.push_back(t2);
-
-			
-			plane.BuildVbo();
-			Core::Get()->meshes.push_back(plane);
-			Print("done");
-			view.Update();
-
-		}
 	}
 }

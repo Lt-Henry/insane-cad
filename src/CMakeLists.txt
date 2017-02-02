@@ -1,9 +1,6 @@
 
 #main 
-add_executable(insane-cad main.cpp Core.cpp Window.cpp View.cpp Raster.cpp Math.cpp Mesh.cpp Color.cpp Vbo.cpp)
-
-#performance tests
-#add_executable(benchmark benchmark.cpp Raster.cpp Math.cpp Color.cpp Vbo.cpp)
+add_executable(insane-cad main.cpp Core.cpp Window.cpp View.cpp Mesh.cpp Color.cpp)
 
 #require pkg-config support
 find_package(PkgConfig REQUIRED)
@@ -14,7 +11,7 @@ pkg_check_modules(GTKMM REQUIRED gtkmm-3.0)
 
 include_directories(${GTKMM_INCLUDE_DIRS})
 
-target_link_libraries(insane-cad ${GTKMM_LIBRARIES})
+target_link_libraries(insane-cad ${GTKMM_LIBRARIES} blaster)
 
 #add custom lib flags
 add_definitions(-std=c++11 -O3)

@@ -20,9 +20,7 @@
 #ifndef _IC_MESH_
 #define _IC_MESH_
 
-#include "Math.hpp"
-#include "Color.hpp"
-#include "Vbo.hpp"
+
 
 #include <string>
 #include <vector>
@@ -31,10 +29,10 @@ namespace ic
 {
 	class Vertex {
 	public:
-		Vec4 position;
-		Vec4 normal;
-		Color color;
-		Vec2 uv;
+		float position [4];
+		float normal [4];
+		float color[4];
+		float uv[2];
 	};
 	
 	
@@ -46,7 +44,6 @@ namespace ic
 	
 	class Mesh {
 	public:
-		Vbo vbo;
 	
 		std::string name;
 		std::vector<Vertex> vertices;
@@ -54,9 +51,6 @@ namespace ic
 		
 		Mesh();
 		Mesh(std::string filename);
-		
-		void Select(Vec4 center,float radius);
-		void Select(Vec4 point,Vec4 normal,float distance);
 		
 		void BuildVbo();
 	};

@@ -20,8 +20,7 @@
 #ifndef _IC_VIEW_
 #define _IC_VIEW_
 
-#include "Raster.hpp"
-#include "Vbo.hpp"
+#include <blaster/raster.h>
 
 #include <gtkmm/drawingarea.h>
 
@@ -50,15 +49,12 @@ namespace ic
 		
 		float pressX,pressY;
 		float rX,rY,rZ;
-		Mat16 matT;
-		
-		Vbo axis;
 		
 		void UpdateOrtho();
 	
 	public:
 	
-		Raster* raster;
+		uint32_t* buffer;
 		
 		View();
 		virtual ~View();

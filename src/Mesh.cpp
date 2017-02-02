@@ -19,6 +19,9 @@
 
 #include "Mesh.hpp"
 
+#include <blaster/math.h>
+#include <blaster/color.h>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -116,11 +119,10 @@ Mesh::Mesh(string filename)
 			nz=stof(tokens[5]);
 			
 			Vertex vx;
-			vx.position.Set(x,y,z,1.0f);
-			vx.normal.Set(nx,ny,nz,0.0f);
-			vx.normal.Normalize();//just in case
-			
-			vx.color.Set(0.3f,0.3f,0.3f);
+			bl_vec_set(vx.position,x,y,z,1.0f);
+			bl_vec_set(vx.normal,nx,ny,nz,0.0f);
+			bl_vec_normalize(vx.normal);// just in case
+			bl_color_set(vx.color,0.3f,0.3f,0.3f,1.0f);
 			
 			this->vertices.push_back(vx);
 			
@@ -164,69 +166,10 @@ Mesh::Mesh(string filename)
 	fs.close();
 }
 
-void Mesh::Select(Vec4 center,float radius)
-{
-	for (Vertex & vertex : vertices) {
-		
-		Vec4 pc=vertex.position - center;
-		
-		if (pc.Norm()<radius) {
-			vertex.color=Color(0,0.4f,0.9f);
-		}
-	}
-}
-
-
-void Mesh::Select(Vec4 point,Vec4 normal,float distance)
-{
-	for (Vertex & vertex : vertices) {
-
-		Vec4 b=vertex.position-point;
-		
-		float dist=b*normal;
-		
-		if (std::fabs(dist)<distance) {
-			vertex.color=Color(0,0.4f,0.9f);
-		}
-	}
-}
 
 
 void Mesh::BuildVbo()
 {
 
-	vbo=Vbo(Primitive::Triangle);
-	
-	for (Triangle triangle : triangles) {
-		
-		Vec4 v;
-		Vec4 n;
-		Color c;
-		Vec2 uv;
-		
-		v=vertices[triangle.vertices[0]].position;
-		n=vertices[triangle.vertices[0]].normal;
-		c=vertices[triangle.vertices[0]].color;
-		uv=vertices[triangle.vertices[0]].uv;
-		
-		vbo.Load(v,n,c,uv);
-		vbo.Push();
-		
-		v=vertices[triangle.vertices[1]].position;
-		n=vertices[triangle.vertices[1]].normal;
-		c=vertices[triangle.vertices[1]].color;
-		uv=vertices[triangle.vertices[1]].uv;
-		
-		vbo.Load(v,n,c,uv);
-		vbo.Push();
 
-		v=vertices[triangle.vertices[2]].position;
-		n=vertices[triangle.vertices[2]].normal;
-		c=vertices[triangle.vertices[2]].color;
-		uv=vertices[triangle.vertices[2]].uv;
-		
-		vbo.Load(v,n,c,uv);
-		vbo.Push();
-
-	}
 }
