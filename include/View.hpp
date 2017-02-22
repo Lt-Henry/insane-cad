@@ -37,6 +37,8 @@ namespace ic
 	
 	protected:
 	
+		bl_raster_t* raster;
+	
 		int width;
 		int height;
 	

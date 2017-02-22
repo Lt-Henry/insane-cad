@@ -52,12 +52,14 @@ View::View()
 
 	UpdateOrtho();
 	
+	raster=bl_raster_new();
 }
 
 
 View::~View()
 {
 	delete buffer;
+	bl_raster_delete(raster);
 }
 
 
@@ -115,6 +117,11 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		delete buffer;
 		
 		buffer=new uint32_t[width*height];
+		
+		bl_raster_resize(raster,width,height);
+		
+		cout<<"size: "<<w<<","<<h<<endl;
+		cout<<"real size: "<<bl_raster_get_width(raster)<<","<<bl_raster_get_height(raster)<<endl;
 
 		UpdateOrtho();
 	
