@@ -21,6 +21,8 @@
 #include "View.hpp"
 #include "Mesh.hpp"
 
+#include <blaster/constants.h>
+
 #include <iostream>
 #include <chrono>
 
@@ -120,8 +122,8 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 		
 		bl_raster_resize(raster,width,height);
 		
-		cout<<"size: "<<w<<","<<h<<endl;
-		cout<<"real size: "<<bl_raster_get_width(raster)<<","<<bl_raster_get_height(raster)<<endl;
+		//cout<<"size: "<<w<<","<<h<<endl;
+		//cout<<"real size: "<<bl_raster_get_width(raster)<<","<<bl_raster_get_height(raster)<<endl;
 
 		UpdateOrtho();
 	
@@ -144,6 +146,34 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 	modelMatrix = matT ^ tM;
 	*/
 	
+	for (int y=0;y<height;y++) {
+		for (int x=0;x<width;x++) {
+			buffer[x+y*width]=0xeeeeeeff;
+		}
+	}
+	
+	bl_raster_clear(raster);
+	
+	bl_raster_update(raster);
+	
+	int numTiles=raster->tiles_width*raster->tiles_height;
+	
+	int ofx=(width-bl_raster_get_width(raster))/2;
+	int ofy=(height-bl_raster_get_height(raster))/2;
+	
+	for (int n=0;n<numTiles;n++) {
+		bl_tile_t* tile=raster->tiles[n];
+		
+		for (int y=0;y<tile->height;y++) {
+			for (int x=0;x<tile->width;x++) {
+
+				int dx = ofx+x+tile->x;
+				int dy = ofy+y+tile->y;
+				
+				buffer[dx+dy*width] = tile->color[x+y*BL_TILE_SIZE];
+			}
+		}
+	}
 	
 	this->rX=0.0f;
 	this->rY=0.0f;
