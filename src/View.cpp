@@ -21,13 +21,16 @@
 #include <View.hpp>
 
 #include <blaster/constants.h>
+#include <blaster/vbo.h>
 
 #include <iostream>
 #include <chrono>
+#include <random>
 
 using namespace ic;
 using namespace std;
 
+bl_vbo_t* points;
 
 View::View()
 {
@@ -47,9 +50,26 @@ View::View()
 
     button_status=ButtonStatus::Released;
 
-    update_ortho();
-
     raster=bl_raster_new(width,height);
+    
+    // generate some random points
+    const int num_points=320000;
+    points=bl_vbo_new(num_points,8);
+    
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(-5, 5);
+    
+    for (int n=0;n<num_points;n++) {
+        float x=dist(mt);
+        float y=dist(mt);
+        float z=dist(mt);
+        
+        bl_vbo_add(points,x,y,z,1.0f,0.0f,0.0f,0.0f,1.0f);
+    }
+    
+    
+    update_ortho();
 }
 
 
@@ -78,7 +98,9 @@ void View::update_ortho()
     }
 
     //raster->SetOrtho(left,right,top,bottom,0.01,1000.0);
-
+    bl_matrix_stack_load_identity(raster->projection);
+    bl_matrix_stack_frustum(raster->projection,
+        left,right,top,bottom,10,100);
     //Mat16 projection = Mat16::Frustum(left,right,top,bottom,1.0f,1000.0f);
 
 
@@ -101,8 +123,6 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     //resize
     if (w!=width or h!=height) {
-    
-        clog<<"resize!"<<endl;
 
         width=w;
         height=h;
@@ -112,16 +132,30 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     }
 
+    auto start = chrono::steady_clock::now();
+
     float clear_color[4] = {1.0,0.9,0.9,0.9};
     
     bl_raster_set_clear_color(raster,clear_color);
     bl_raster_clear(raster);
+    
+    bl_matrix_stack_load_identity(raster->modelview);
+    bl_matrix_stack_translate(raster->modelview,0.0f,0.0f,-zoom);
+    bl_matrix_stack_rotate_x(raster->modelview,this->ry);
+    bl_matrix_stack_rotate_y(raster->modelview,this->rx);
+    
+    bl_raster_draw(raster,points);
 
     bl_raster_update(raster);
 
-    this->rx=0.0f;
-    this->rx=0.0f;
-
+    auto end = chrono::steady_clock::now();
+    
+    auto diff = end - start;
+    
+    double raster_time = chrono::duration <double, milli> (diff).count();
+    int fps = 1000/raster_time;
+    
+    clog<<"raster time: "<<raster_time<<" ms fps:"<<fps<<"\n";
     
     Cairo::RefPtr<Cairo::ImageSurface> imageBuffer;
 
@@ -175,9 +209,9 @@ bool View::on_button_press_event(GdkEventButton * button_event)
     float mx=button_event->x;
     float my=button_event->y;
 
-    Gtk::Allocation allocation = get_allocation();
-    const int w = allocation.get_width();
-    const int h = allocation.get_height();
+    //Gtk::Allocation allocation = get_allocation();
+    //const int w = allocation.get_width();
+    //const int h = allocation.get_height();
 
     clog<<"press"<<endl;
     clog<<"mouse coords: "<<mx<<","<<my<<endl;

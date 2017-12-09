@@ -179,7 +179,8 @@ void Mesh::build_vbo()
             vx.position[0],
             vx.position[1],
             vx.position[2],
-            vx.position[3]
+            vx.position[3],
+            0.0f,0.0f,0.0f,1.0f
             );
     }
     
