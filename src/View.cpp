@@ -139,6 +139,8 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     bl_raster_set_clear_color(raster,clear_color);
     bl_raster_clear(raster);
     
+    auto p0 = chrono::steady_clock::now();
+    
     bl_matrix_stack_load_identity(raster->modelview);
     bl_matrix_stack_translate(raster->modelview,0.0f,0.0f,-zoom);
     bl_matrix_stack_rotate_x(raster->modelview,this->ry);
@@ -146,16 +148,23 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     bl_raster_draw(raster,points);
 
+    auto p1 = chrono::steady_clock::now();
+    
     bl_raster_update(raster);
 
     auto end = chrono::steady_clock::now();
     
     auto diff = end - start;
+    auto diff1 = p0 - start;
+    auto diff2 = p1 - p0;
     
-    double raster_time = chrono::duration <double, milli> (diff).count();
-    int fps = 1000/raster_time;
+    double full_time = chrono::duration <double, milli> (diff).count();
+    double clear_time = chrono::duration <double, milli> (diff1).count();
+    double raster_time = chrono::duration <double, milli> (diff2).count();
     
-    clog<<"raster time: "<<raster_time<<" ms fps:"<<fps<<"\n";
+    int fps = 1000/full_time;
+    
+    clog<<"time: "<<full_time<<" ms fps:"<<fps<<"["<<clear_time<<","<<raster_time<<"]"<<"\n";
     
     Cairo::RefPtr<Cairo::ImageSurface> imageBuffer;
 
