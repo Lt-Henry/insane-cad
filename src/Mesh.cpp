@@ -172,7 +172,7 @@ void Mesh::build_vbo()
         vbo=nullptr;
     }
     
-    bl_vbo_new(this->vertices.size(),4);
+    vbo=bl_vbo_new(this->vertices.size(),8);
     
     for (Vertex& vx:vertices) {
         bl_vbo_add(vbo,

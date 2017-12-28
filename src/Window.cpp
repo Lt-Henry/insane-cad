@@ -104,6 +104,10 @@ bool Window::on_prompt_key(GdkEventKey* event)
         if (tokens[0]=="load") {
             if (tokens.size() > 1 ) {
                 print("Loading: "+tokens[1]);
+                
+                Mesh* mesh=Mesh::load_ply(tokens[1]);
+                mesh->build_vbo();
+                Core::get()->models.push_back(mesh);
 
                 print("done");
                 view.update();

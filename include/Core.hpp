@@ -20,7 +20,9 @@
 #ifndef IC_CORE
 #define IC_CORE
 
+#include <Mesh.hpp>
 
+#include <vector>
 
 namespace ic
 {
@@ -32,6 +34,7 @@ namespace ic
         
 
     public:
+        std::vector<Mesh*> models;
         
         Core();
         

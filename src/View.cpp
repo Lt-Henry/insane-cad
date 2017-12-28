@@ -65,7 +65,11 @@ View::View()
         float y=dist(mt);
         float z=dist(mt);
         
-        bl_vbo_add(points,x,y,z,1.0f,0.0f,0.0f,0.0f,1.0f);
+        float r=(x+5.0f)/10.0f;
+        float g=(y+5.0f)/10.0f;
+        float b=(z+5.0f)/10.0f;
+        
+        bl_vbo_add(points,x,y,z,1.0f,r,g,b,1.0f);
     }
     
     
@@ -100,7 +104,7 @@ void View::update_ortho()
     //raster->SetOrtho(left,right,top,bottom,0.01,1000.0);
     bl_matrix_stack_load_identity(raster->projection);
     bl_matrix_stack_frustum(raster->projection,
-        left,right,top,bottom,10,100);
+        left,right,top,bottom,10,1000);
     //Mat16 projection = Mat16::Frustum(left,right,top,bottom,1.0f,1000.0f);
 
 
@@ -146,7 +150,11 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     bl_matrix_stack_rotate_x(raster->modelview,this->ry);
     bl_matrix_stack_rotate_y(raster->modelview,this->rx);
     
-    bl_raster_draw(raster,points);
+    bl_raster_draw_points(raster,points);
+    
+    for (Mesh* mesh: Core::get()->models) {
+        bl_raster_draw_points(raster,mesh->vbo);
+    }
 
     auto p1 = chrono::steady_clock::now();
     
@@ -164,7 +172,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     int fps = 1000/full_time;
     
-    clog<<"time: "<<full_time<<" ms fps:"<<fps<<"["<<clear_time<<","<<raster_time<<"]"<<"\n";
+    clog<<"time: "<<full_time<<" ms - fps:"<<fps<<" ["<<clear_time<<","<<raster_time<<"]"<<"\n";
     
     Cairo::RefPtr<Cairo::ImageSurface> imageBuffer;
 
@@ -196,18 +204,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->line_to(width,height/2.0);
     cr->stroke();
 
-    /*
-    int ns=(raster->ns_clear+raster->ns_projection+raster->ns_transform+raster->ns_triangle);
 
-    int fps = 1000000000/ns;
-    cout <<"* time " << ns/1000000 <<" ms ("<<fps<<") fps"<<endl;
-    cout<<"* clear: "<<raster->ns_clear/1000000<<" ms"<<endl;
-    cout<<"* projection: "<<raster->ns_projection/1000000<<" ms"<<endl;
-    cout<<"* transform: "<<raster->ns_transform/1000000<<" ms"<<endl;
-    cout<<"* triangle: "<<raster->ns_triangle/1000000<<" ms"<<endl;
-    cout<<"* t1: "<<raster->ns_t1/1000000<<" ms"<<endl;
-    cout<<"* t2: "<<raster->ns_t2/1000000<<" ms"<<endl;
-    */
     
     return true;
 }
