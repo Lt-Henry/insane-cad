@@ -51,6 +51,7 @@ namespace ic
 
         float press_x,press_y;
         float rx,ry,rz;
+        float pre_rx,pre_ry,pre_rz;
 
         void update_ortho();
 

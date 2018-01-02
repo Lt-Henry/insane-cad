@@ -20,6 +20,7 @@
 #ifndef IC_MESH
 #define IC_MESH
 
+#include <blaster/constants.h>
 #include <blaster/vbo.h>
 
 #include <string>

@@ -22,6 +22,7 @@
 
 #include <blaster/constants.h>
 #include <blaster/vbo.h>
+#include <blaster/color.h>
 
 #include <iostream>
 #include <chrono>
@@ -47,29 +48,43 @@ View::View()
     rx=0.0f;
     ry=0.0f;
     rz=0.0f;
+    
+    pre_rx=0;
+    pre_ry=0;
+    
 
     button_status=ButtonStatus::Released;
 
     raster=bl_raster_new(width,height);
     
     // generate some random points
-    const int num_points=320000;
-    points=bl_vbo_new(num_points,8);
+    const int num_points=3200000;
+    uint8_t attribs[16] = { BL_F32,4,
+                            BL_F32,4,
+                            0,0,0,0,0,0,0,0,0,0,0,0 };
+                            
+    points=bl_vbo_new(num_points,attribs);
     
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_real_distribution<float> dist(-5, 5);
     
     for (int n=0;n<num_points;n++) {
-        float x=dist(mt);
-        float y=dist(mt);
-        float z=dist(mt);
+        float pos[4];
+        float color[4];
         
-        float r=(x+5.0f)/10.0f;
-        float g=(y+5.0f)/10.0f;
-        float b=(z+5.0f)/10.0f;
+        pos[0]=dist(mt);
+        pos[1]=dist(mt);
+        pos[2]=dist(mt);
+        pos[3]=1.0f;
         
-        bl_vbo_add(points,x,y,z,1.0f,r,g,b,1.0f);
+        color[0]=(pos[0]+5.0f)/10.0f;
+        color[1]=(pos[1]+5.0f)/10.0f;
+        color[2]=(pos[2]+5.0f)/10.0f;
+        color[3]=1.0f;
+        
+        bl_vbo_set(points,0,n,pos);
+        bl_vbo_set(points,1,n,color);
     }
     
     
@@ -104,7 +119,7 @@ void View::update_ortho()
     //raster->SetOrtho(left,right,top,bottom,0.01,1000.0);
     bl_matrix_stack_load_identity(raster->projection);
     bl_matrix_stack_frustum(raster->projection,
-        left,right,top,bottom,10,1000);
+        left,right,top,bottom,1,1000);
     //Mat16 projection = Mat16::Frustum(left,right,top,bottom,1.0f,1000.0f);
 
 
@@ -147,8 +162,11 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     bl_matrix_stack_load_identity(raster->modelview);
     bl_matrix_stack_translate(raster->modelview,0.0f,0.0f,-zoom);
-    bl_matrix_stack_rotate_x(raster->modelview,this->ry);
-    bl_matrix_stack_rotate_y(raster->modelview,this->rx);
+
+    bl_matrix_stack_rotate_x(raster->modelview,pre_ry+ry);
+    bl_matrix_stack_rotate_y(raster->modelview,pre_rx+rx);
+
+
     
     bl_raster_draw_points(raster,points);
     
@@ -227,6 +245,22 @@ bool View::on_button_press_event(GdkEventButton * button_event)
     button_status=ButtonStatus::Pressed;
     this->press_x=mx;
     this->press_y=my;
+    
+    uint16_t* zbuffer;
+    uint32_t* cbuffer;
+    
+    zbuffer = (uint16_t*)raster->depth_buffer->data;
+    cbuffer = (uint32_t*)raster->color_buffer->data;
+    
+    int ix = mx;
+    int iy = my;
+    
+    uint16_t z = zbuffer[ix+iy*(raster->screen_width)];
+    uint32_t pix = cbuffer[ix+iy*(raster->screen_width)];
+    
+    clog<<"zbuffer on ["<<ix<<","<<iy<<"]="<<hex<<z<<endl;
+    clog<<"pixel on ["<<ix<<","<<iy<<"]="<<hex<<pix<<dec<<endl;
+    
 
     return true;
 }
@@ -236,6 +270,12 @@ bool View::on_button_release_event(GdkEventButton * button_event)
 {
     clog<<"release"<<endl;
     button_status=ButtonStatus::Released;
+    
+    pre_rx+=rx;
+    pre_ry+=ry;
+    
+    rx=0;
+    ry=0;
 
     return true;
 }
@@ -243,7 +283,7 @@ bool View::on_button_release_event(GdkEventButton * button_event)
 
 bool View::on_scroll_event(GdkEventScroll* scroll_event)
 {
-    if (scroll_event->direction==GDK_SCROLL_UP) {
+    if (scroll_event->direction==GDK_SCROLL_DOWN) {
         zoom+=1.0f;
 
         //UpdateOrtho();
@@ -253,7 +293,7 @@ bool View::on_scroll_event(GdkEventScroll* scroll_event)
         clog<<"zoom: "<<zoom<<endl;
     }
 
-    if (scroll_event->direction==GDK_SCROLL_DOWN) {
+    if (scroll_event->direction==GDK_SCROLL_UP) {
         zoom-=1.0f;
 
         if (zoom<1.0f) {
@@ -279,14 +319,14 @@ bool View::on_motion_notify_event(GdkEventMotion* motion_event)
     float my=motion_event->y;
 
     if (button_status==ButtonStatus::Pressed) {
-        float deltax=mx-this->press_x;
-        float deltay=this->press_y-my;
+        float deltax=mx-press_x;
+        float deltay=press_y-my;
 
-        this->rx+=(deltax/8.0f);
-        this->ry-=(deltay/8.0f);
+        rx=(deltax*0.01745338f);
+        ry=(deltay*0.01745338f);
 
-        this->press_x=mx;
-        this->press_y=my;
+        //this->press_x=mx;
+        //this->press_y=my;
 
         update();
     }

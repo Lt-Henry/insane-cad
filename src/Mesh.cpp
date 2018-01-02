@@ -172,16 +172,22 @@ void Mesh::build_vbo()
         vbo=nullptr;
     }
     
-    vbo=bl_vbo_new(this->vertices.size(),8);
+    uint8_t attribs[16] = { BL_F32,4,
+                        BL_F32,4,
+                        0,0,0,0,0,0,0,0,0,0,0,0 };
+
+    vbo=bl_vbo_new(this->vertices.size(),attribs);
     
-    for (Vertex& vx:vertices) {
-        bl_vbo_add(vbo,
-            vx.position[0],
-            vx.position[1],
-            vx.position[2],
-            vx.position[3],
-            0.0f,0.0f,0.0f,1.0f
-            );
+    for (int n=0;n<vertices.size();n++) {
+    
+        Vertex& v=vertices[n];
+        
+        float color[4]={0.0f,0.0f,0.0f,1.0f};
+        
+        bl_vbo_set(vbo,0,n,v.position);
+        bl_vbo_set(vbo,1,n,color);
+        
+        
     }
     
 
