@@ -55,7 +55,8 @@ namespace ic
         Mesh();
         
         static Mesh* load_ply(std::string filename);
-
+        static Mesh* load_obj(std::string filename);
+        
         void build_vbo();
     };
 }

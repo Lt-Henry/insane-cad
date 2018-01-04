@@ -32,6 +32,34 @@ Mesh::Mesh()
 {
 }
 
+vector<string> split(string line)
+{
+    vector<string> tokens;
+    
+    bool knee=false;
+    string tmp;
+
+    for (char c : line) {
+
+        if (c==' ') {
+            if (knee==true) {
+                tokens.push_back(tmp);
+                knee=false;
+                tmp="";
+            }
+        }
+        else {
+            tmp=tmp+c;
+            knee=true;
+        }
+    }
+
+    if (tmp!="") {
+        tokens.push_back(tmp);
+    }
+    
+    return tokens;
+}
 
 Mesh* Mesh::load_ply(string filename)
 {
@@ -56,27 +84,7 @@ Mesh* Mesh::load_ply(string filename)
     while (!fs.eof()) {
         getline(fs,line);
 
-        bool knee=false;
-        string tmp;
-
-        for (char c : line) {
-
-            if (c==' ') {
-                if (knee==true) {
-                    tokens.push_back(tmp);
-                    knee=false;
-                    tmp="";
-                }
-            }
-            else {
-                tmp=tmp+c;
-                knee=true;
-            }
-        }
-
-        if (tmp!="") {
-            tokens.push_back(tmp);
-        }
+        tokens=split(line);
 
 
         //faces section
@@ -163,7 +171,56 @@ Mesh* Mesh::load_ply(string filename)
     return mesh;
 }
 
+Mesh* Mesh::load_obj(string filename)
+{
+    fstream fs;
 
+    setlocale(LC_NUMERIC,"C");
+
+    fs.open(filename,fstream::in);
+    
+    Mesh* mesh = new Mesh();
+    mesh->vbo=nullptr;
+    
+    vector<string> tokens;
+    
+    
+    
+    
+    while (!fs.eof()) {
+        string line;
+        getline(fs,line);
+
+        //clog<<line<<endl;
+        tokens=split(line);
+        
+        if (tokens.size()==0) {
+            continue;
+        }
+        
+        if (tokens[0]=="o") {
+            clog<<"object: "<<tokens[1]<<endl;
+        }
+        
+        if (tokens[0]=="v") {
+            Vertex vx;
+            
+            vx.position[0]=stof(tokens[1]);
+            vx.position[1]=stof(tokens[2]);
+            vx.position[2]=stof(tokens[3]);
+            vx.position[3]=1.0f;
+            
+            mesh->vertices.push_back(vx);
+        }
+        
+        
+    }
+    
+    
+    fs.close();
+    
+    return mesh;
+}
 
 void Mesh::build_vbo()
 {

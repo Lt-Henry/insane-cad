@@ -183,14 +183,16 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     auto diff = end - start;
     auto diff1 = p0 - start;
     auto diff2 = p1 - p0;
+    auto diff3 = end - p1;
     
     double full_time = chrono::duration <double, milli> (diff).count();
     double clear_time = chrono::duration <double, milli> (diff1).count();
     double raster_time = chrono::duration <double, milli> (diff2).count();
+    double update_time = chrono::duration <double, milli> (diff3).count();
     
     int fps = 1000/full_time;
     
-    clog<<"time: "<<full_time<<" ms - fps:"<<fps<<" ["<<clear_time<<","<<raster_time<<"]"<<"\n";
+    clog<<"time: "<<full_time<<" ms - fps:"<<fps<<" ["<<clear_time<<","<<raster_time<<","<<update_time<<"]"<<"\n";
     
     Cairo::RefPtr<Cairo::ImageSurface> imageBuffer;
 
