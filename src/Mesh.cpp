@@ -19,6 +19,8 @@
 
 #include <Mesh.hpp>
 
+#include <blaster/vector.h>
+#include <blaster/color.h>
 
 #include <iostream>
 #include <fstream>
@@ -229,20 +231,28 @@ void Mesh::build_vbo()
         vbo=nullptr;
     }
     
-    uint8_t attribs[16] = { BL_F32,4,
-                        BL_F32,4,
-                        0,0,0,0,0,0,0,0,0,0,0,0 };
+    struct point_t {
+        bl_vector_t pos;
+        bl_color_t color;
+    };
 
-    vbo=bl_vbo_new(this->vertices.size(),attribs);
+    vbo=bl_vbo_new(this->vertices.size(),sizeof(struct point_t));
     
     for (int n=0;n<vertices.size();n++) {
     
-        Vertex& v=vertices[n];
+        struct point_t point;
         
-        float color[4]={0.0f,0.0f,0.0f,1.0f};
+        point.pos.x=vertices[n].position[0];
+        point.pos.y=vertices[n].position[1];
+        point.pos.z=vertices[n].position[2];
+        point.pos.w=vertices[n].position[3];
         
-        bl_vbo_set(vbo,0,n,v.position);
-        bl_vbo_set(vbo,1,n,color);
+        point.color.r=0.0f;
+        point.color.g=0.0f;
+        point.color.b=1.0f;
+        point.color.a=1.0f;
+        
+        bl_vbo_set(vbo,n,&point);
         
         
     }

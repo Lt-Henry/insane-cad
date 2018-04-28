@@ -23,6 +23,8 @@
 #include <blaster/constants.h>
 #include <blaster/vbo.h>
 #include <blaster/color.h>
+#include <blaster/vector.h>
+
 
 #include <iostream>
 #include <chrono>
@@ -59,32 +61,34 @@ View::View()
     
     // generate some random points
     const int num_points=3200000;
-    uint8_t attribs[16] = { BL_F32,4,
-                            BL_F32,4,
-                            0,0,0,0,0,0,0,0,0,0,0,0 };
+    struct point_t {
+        bl_vector_t pos;
+        bl_color_t color;
+    };
+    
+    
                             
-    points=bl_vbo_new(num_points,attribs);
+    points=bl_vbo_new(num_points,sizeof(struct point_t));
     
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_real_distribution<float> dist(-5, 5);
     
     for (int n=0;n<num_points;n++) {
-        float pos[4];
-        float color[4];
+    
+        struct point_t point;
         
-        pos[0]=dist(mt);
-        pos[1]=dist(mt);
-        pos[2]=dist(mt);
-        pos[3]=1.0f;
+        point.pos.x=dist(mt);
+        point.pos.y=dist(mt);
+        point.pos.z=dist(mt);
+        point.pos.w=1.0f;
         
-        color[0]=(pos[0]+5.0f)/10.0f;
-        color[1]=(pos[1]+5.0f)/10.0f;
-        color[2]=(pos[2]+5.0f)/10.0f;
-        color[3]=1.0f;
+        point.color.r=(point.pos.x+5.0f)/10.0f;
+        point.color.g=(point.pos.y+5.0f)/10.0f;
+        point.color.b=(point.pos.z+5.0f)/10.0f;
+        point.color.a=1.0f;
         
-        bl_vbo_set(points,0,n,pos);
-        bl_vbo_set(points,1,n,color);
+        bl_vbo_set(points,n,&point);
     }
     
     
@@ -153,9 +157,10 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     auto start = chrono::steady_clock::now();
 
-    float clear_color[4] = {1.0,0.9,0.9,0.9};
+    bl_color_t clear_color;
+    bl_color_set(&clear_color,0.9,0.9,0.9,1.0);
     
-    bl_raster_set_clear_color(raster,clear_color);
+    bl_raster_set_clear_color(raster,&clear_color);
     bl_raster_clear(raster);
     
     auto p0 = chrono::steady_clock::now();
@@ -194,6 +199,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     clog<<"time: "<<full_time<<" ms - fps:"<<fps<<" ["<<clear_time<<","<<raster_time<<","<<update_time<<"]"<<"\n";
     
+    
     Cairo::RefPtr<Cairo::ImageSurface> imageBuffer;
 
     imageBuffer=Cairo::ImageSurface::create(
@@ -214,7 +220,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     
     cr->set_source(imageBuffer,0,0);
     cr->paint();
-    
+    /*
     cr->set_source_rgb(0.39, 0.48, 0.51);
     cr->move_to(width/2.0,0);
     cr->line_to(width/2.0,height);
@@ -223,7 +229,7 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->move_to(0,height/2.0);
     cr->line_to(width,height/2.0);
     cr->stroke();
-
+    */
 
     
     return true;
