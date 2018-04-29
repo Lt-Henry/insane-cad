@@ -237,6 +237,7 @@ void Mesh::build_vbo()
     };
 
     vbo=bl_vbo_new(this->vertices.size(),sizeof(struct point_t));
+    clog<<"points: "<<this->vertices.size()<<":"<<sizeof(struct point_t)<<endl;
     
     for (int n=0;n<vertices.size();n++) {
     

@@ -60,7 +60,7 @@ View::View()
     raster=bl_raster_new(width,height);
     
     // generate some random points
-    const int num_points=3200000;
+    const int num_points=32;
     struct point_t {
         bl_vector_t pos;
         bl_color_t color;

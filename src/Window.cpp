@@ -105,7 +105,7 @@ bool Window::on_prompt_key(GdkEventKey* event)
             if (tokens.size() > 1 ) {
                 print("Loading: "+tokens[1]);
                 
-                Mesh* mesh=Mesh::load_obj(tokens[1]);
+                Mesh* mesh=Mesh::load_ply(tokens[1]);
                 mesh->build_vbo();
                 Core::get()->models.push_back(mesh);
 
