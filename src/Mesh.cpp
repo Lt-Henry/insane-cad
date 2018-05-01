@@ -236,9 +236,40 @@ void Mesh::build_vbo()
         bl_color_t color;
     };
 
-    vbo=bl_vbo_new(this->vertices.size(),sizeof(struct point_t));
-    clog<<"points: "<<this->vertices.size()<<":"<<sizeof(struct point_t)<<endl;
+    //vbo=bl_vbo_new(this->vertices.size(),sizeof(struct point_t));
+    vbo=bl_vbo_new(this->triangles.size()*6,sizeof(struct point_t));
+    int index=0;
     
+    for (int n=0;n<triangles.size();n++) {
+        for (int m=0;m<3;m++) {
+            int i1=m;
+            int i2=(m+1)%3;
+            Vertex & v1 = triangles[n].vertices[i1];
+            Vertex & v2 = triangles[n].vertices[i2];
+            
+            struct point_t point;
+            
+            point.color.r=0.0f;
+            point.color.g=0.0f;
+            point.color.b=1.0f;
+            point.color.a=1.0f;
+            
+            for (int k=0;k<4;k++) {
+                point.pos.data[k]=v1.position[k];
+            }
+            
+            bl_vbo_set(vbo,index,&point);
+            index++;
+            
+            for (int k=0;k<4;k++) {
+                point.pos.data[k]=v2.position[k];
+            }
+            
+            bl_vbo_set(vbo,index,&point);
+            index++;
+        }
+    }
+    /*
     for (int n=0;n<vertices.size();n++) {
     
         struct point_t point;
@@ -257,6 +288,6 @@ void Mesh::build_vbo()
         
         
     }
-    
+    */
 
 }
