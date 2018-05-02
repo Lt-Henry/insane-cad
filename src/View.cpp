@@ -173,10 +173,10 @@ bool View::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 
     
-    bl_raster_draw_points(raster,points);
+    bl_raster_draw_lines(raster,points);
     
     for (Mesh* mesh: Core::get()->models) {
-        bl_raster_draw_points(raster,mesh->vbo);
+        bl_raster_draw_lines(raster,mesh->vbo);
     }
 
     auto p1 = chrono::steady_clock::now();

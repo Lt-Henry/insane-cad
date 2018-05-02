@@ -244,8 +244,8 @@ void Mesh::build_vbo()
         for (int m=0;m<3;m++) {
             int i1=m;
             int i2=(m+1)%3;
-            Vertex & v1 = triangles[n].vertices[i1];
-            Vertex & v2 = triangles[n].vertices[i2];
+            Vertex & v1 = vertices[triangles[n].vertices[i1]];
+            Vertex & v2 = vertices[triangles[n].vertices[i2]];
             
             struct point_t point;
             
